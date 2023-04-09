@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddActivity">
+
+    <TextView
+        android:layout_width="257dp"
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true"
+        android:text="Введите данные животного"
+        android:textSize="25dp"
+        android:id="@+id/text_add"
+
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="Кличка"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/name_add"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/text_add"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="Тип"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/type_add"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/name_add"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="Возраст"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/age_add"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/type_add"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="Вес"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/weight_add"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/age_add"
+        />
+
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Добавить"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/btn_add_Animal"
+        />
+
+</RelativeLayout>

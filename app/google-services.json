@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "159491534487",
+    "project_id": "catdog-9f71c",
+    "storage_bucket": "catdog-9f71c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159491534487:android:ce147f8f28659fc69343d2",
+        "android_client_info": {
+          "package_name": "com.example.catdog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "159491534487-bn4p723indtvm39qurko8u7hjg32o90n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwdLGK5f0LMk-JdaBlfpofaeB06N55mJQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "159491534487-bn4p723indtvm39qurko8u7hjg32o90n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
