@@ -82,6 +82,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
     if (requestCode == ADD_ANIMAL_REQUEST && resultCode == RESULT_OK) {
+        /*
         String name = data.getStringExtra("name");
         String type = data.getStringExtra("type");
         int age = data.getIntExtra("age", 0);
@@ -90,6 +91,11 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         Animal animal = new Animal(name, type, age, weight, image);
         addAnimal(animal);
+
+         */
+        Animal animal = (Animal) data.getSerializableExtra("animal");
+        animalList.add(animal);
+        animalAdapter.notifyDataSetChanged()
 
         Log.d("MainActivity", "Добавленное: " + animal.toString());
     } else {
