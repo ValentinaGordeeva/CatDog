@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
 
     private AnimalAdapter animalAdapter;
     private ArrayList<Animal> animalList = new ArrayList<>();
+    private List<Animal> animals = new ArrayList<>();
+
+    private AnimalAdapter adapter;
     private static final int ADD_ANIMAL_REQUEST = 1;
 
     @Override
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 @Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+ /*
     if (requestCode == ADD_ANIMAL_REQUEST && resultCode == RESULT_OK) {
         /*
         String name = data.getStringExtra("name");
@@ -92,10 +96,10 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Animal animal = new Animal(name, type, age, weight, image);
         addAnimal(animal);
 
-         */
+
         Animal animal = (Animal) data.getSerializableExtra("animal");
         animalList.add(animal);
-        animalAdapter.notifyDataSetChanged()
+        animalAdapter.notifyDataSetChanged();
 
         Log.d("MainActivity", "Добавленное: " + animal.toString());
     } else {
@@ -107,6 +111,18 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onPause();
         Log.d("AddActivity", "onPause() called");
     }
+    */
+
+    if (requestCode == ADD_ANIMAL_REQUEST && resultCode == Activity.RESULT_OK) { // проверяем, что результат получен от AddActivity и результат успешный
+        if (data != null) {
+            Animal animal = data.getParcelableExtra("animal");
+            if (animal != null) {
+                animals.add(animal);
+                adapter.notifyDataSetChanged(); // обновляем список животных
+            }
+        }
+    }
+}
 
 }
 
