@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+   <TextView
+       android:textSize="25dp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Введите данные"
+       android:id="@+id/text"
+       />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Кличка" />
+    <EditText
+        android:id="@+id/etType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Тип" />
+    <EditText
+        android:id="@+id/etAge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etType"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Возраст" />
+    <EditText
+        android:id="@+id/etWeight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etAge"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Вес" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnAdd"
+        android:text="Добавить"
+        />
+
+
+
+</LinearLayout>
