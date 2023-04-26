@@ -1,5 +1,7 @@
 package com.example.catdog;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,20 +66,25 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         public TextView tvType;
         public TextView tvAge;
         public TextView tvWeight;
-        private TextView ivPhoto;
+        // private TextView ivPhoto;
         private ImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(R.id.tv_animal_name);
-            tvType = itemView.findViewById(R.id.tv_animal_type);
-            tvAge = itemView.findViewById(R.id.tv_animal_age);
-            tvWeight = itemView.findViewById(R.id.tv_animal_weight);
-            imageView = itemView.findViewById(R.id.ivPhoto);
+            tvName = itemView.findViewById(R.id.etName);
+            tvType = itemView.findViewById(R.id.etType);
+            tvAge = itemView.findViewById(R.id.etAge);
+            tvWeight = itemView.findViewById(R.id.etWeight);
+            imageView = itemView.findViewById(R.id.imageView);
         }
 
         public void bind(Animal animal) {
-            imageView.setImageBitmap(animal.getImage());
+            if (animal.getImage() != null) {
+                imageView.setImageBitmap(animal.getImage());
+            } else {
+                // здесь можно установить другое изображение-заполнитель
+                imageView.setImageResource(R.drawable.cat);
+            }
             tvName.setText(animal.getName());
             tvType.setText(animal.getType());
             tvAge.setText("Age: " + animal.getAge());

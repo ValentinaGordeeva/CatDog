@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager( layoutManager );
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(animalAdapter);
         /*
         Bitmap catBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
@@ -75,14 +75,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-      public void addAnimal(Animal animal) {
+
+    public void addAnimal(Animal animal) {
         animalList.add(animal);
-       animalAdapter.notifyDataSetChanged();
+        animalAdapter.notifyDataSetChanged();
     }
 
 
-@Override
-protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
  /*
     if (requestCode == ADD_ANIMAL_REQUEST && resultCode == RESULT_OK) {
@@ -113,16 +114,15 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
     */
 
-    if (requestCode == ADD_ANIMAL_REQUEST && resultCode == Activity.RESULT_OK) { // проверяем, что результат получен от AddActivity и результат успешный
-        if (data != null) {
-            Animal animal = data.getParcelableExtra("animal");
-            if (animal != null) {
-                animals.add(animal);
-                adapter.notifyDataSetChanged(); // обновляем список животных
+        if (requestCode == ADD_ANIMAL_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Animal animal = data.getParcelableExtra("animal");
+                if (animal != null) {
+                    animals.add(animal);
+                    animalAdapter.notifyDataSetChanged();
+                }
             }
         }
     }
-}
-
 }
 

@@ -48,60 +48,62 @@ import java.util.List;
 
  public class AddActivity extends AppCompatActivity {
 
-    private EditText etName, etType, etAge, etWeight;
-    private Button btnAdd;
-    private Button btnAddPhoto;
+     private EditText etName, etType, etAge, etWeight;
+     private Button btnAdd;
+     private Button btnAddPhoto;
 
-    static final int PICK_IMAGE_REQUEST = 1;
-    private ImageView ivPreview;
-    private Uri imageUri;
-    private Bitmap animalBitmap;
+     static final int PICK_IMAGE_REQUEST = 1;
+     private ImageView ivPreview;
+     private Uri imageUri;
+     private Bitmap animalBitmap;
      private static final int REQUEST_CODE = 1;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add);
 
-        etName = findViewById(R.id.etName);
-        etType = findViewById(R.id.etType);
-        etAge = findViewById(R.id.etAge);
-        etWeight = findViewById(R.id.etWeight);
-        btnAdd = findViewById(R.id.btnAdd);
-        btnAddPhoto = findViewById(R.id.btnAddPhoto);
-        ivPreview = findViewById(R.id.imageView);
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_add);
 
-        btnAddPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pickImage();
+         etName = findViewById(R.id.etName);
+         etType = findViewById(R.id.etType);
+         etAge = findViewById(R.id.etAge);
+         etWeight = findViewById(R.id.etWeight);
+         btnAdd = findViewById(R.id.btnAdd);
+         btnAddPhoto = findViewById(R.id.btnAddPhoto);
+         ivPreview = findViewById(R.id.imageView);
 
-            }
-        });
+         btnAddPhoto.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 pickImage();
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveAnimal();
+             }
+         });
 
-            }
-        });
-    }
-    private void pickImage() {
+         btnAdd.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 saveAnimal();
+
+             }
+         });
+     }
+
+     private void pickImage() {
          Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_CODE);
+         startActivityForResult(intent, REQUEST_CODE);
 
-    }
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            ivPreview.setImageURI(imageUri);
-        }
-    }
+     }
+
+     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+         super.onActivityResult(requestCode, resultCode, data);
+         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+             imageUri = data.getData();
+             ivPreview.setImageURI(imageUri);
+         }
+     }
 
 
-
-    private void saveAnimal() {
+     /*  private void saveAnimal() {
         String name = etName.getText().toString();
         String type = etType.getText().toString();
         int age = Integer.parseInt(etAge.getText().toString());
@@ -133,8 +135,32 @@ import java.util.List;
         finish();
 
 */
+     private void saveAnimal() {
+         String name = etName.getText().toString();
+         String type = etType.getText().toString();
+         int age = Integer.parseInt(etAge.getText().toString());
+         double weight = Double.parseDouble(etWeight.getText().toString());
+         Bitmap animalBitmap = null;
+         if (imageUri != null) {
+             try {
+                 animalBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+             } catch (IOException e) {
+                 Log.e("AddActivity", "Error getting image bitmap", e);
+             }
+         }
+         Animal animal = new Animal(name, type, age, weight, animalBitmap);
+         Intent resultIntent = new Intent();
+         resultIntent.putExtra("animal", animal);
+         setResult(Activity.RESULT_OK, resultIntent);
+         Toast.makeText(this, "Животное добавлено успешно!", Toast.LENGTH_SHORT).show();
 
+         Intent intent = new Intent(this, MainActivity.class);
+         startActivity(intent); // запускаем MainActivity
+         finish(); // закрываем AddActivity
+     }
+ }
 
+ /*
         Toast.makeText(this, "Животное добавлено успешно!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -142,5 +168,5 @@ import java.util.List;
 
         }
     }
-
+*/
 
