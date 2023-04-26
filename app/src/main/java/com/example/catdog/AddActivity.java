@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -38,6 +39,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,12 +53,8 @@ import java.util.List;
      private EditText etName, etType, etAge, etWeight;
      private Button btnAdd;
      private Button btnAddPhoto;
-
-     static final int PICK_IMAGE_REQUEST = 1;
-     private ImageView ivPreview;
-     private Uri imageUri;
-     private Bitmap animalBitmap;
-     private static final int REQUEST_CODE = 1;
+     private ImageView imageView;
+     private static final int REQUEST_CODE_PICK_IMAGE = 1;
 
      @Override
      protected void onCreate(Bundle savedInstanceState) {
@@ -69,12 +67,14 @@ import java.util.List;
          etWeight = findViewById(R.id.etWeight);
          btnAdd = findViewById(R.id.btnAdd);
          btnAddPhoto = findViewById(R.id.btnAddPhoto);
-         ivPreview = findViewById(R.id.imageView);
+         imageView = findViewById(R.id.imageView);
 
          btnAddPhoto.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 pickImage();
+
+                 Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                 startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
 
              }
          });
@@ -82,91 +82,63 @@ import java.util.List;
          btnAdd.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 saveAnimal();
+
+                 onSaveClick(v);
 
              }
          });
      }
 
-     private void pickImage() {
-         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-         startActivityForResult(intent, REQUEST_CODE);
-
-     }
-
      protected void onActivityResult(int requestCode, int resultCode, Intent data) {
          super.onActivityResult(requestCode, resultCode, data);
-         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-             imageUri = data.getData();
-             ivPreview.setImageURI(imageUri);
+
+         if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+             Uri imageUri = data.getData();
+             Bitmap bitmap = null;
+             try {
+                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+
+             // Устанавливаем выбранное изображение в ImageView
+             imageView.setImageBitmap(bitmap);
          }
      }
+     public void onBackPressed() {
 
+         setResult(Activity.RESULT_CANCELED);
+         super.onBackPressed();
+     }
 
-     /*  private void saveAnimal() {
-        String name = etName.getText().toString();
-        String type = etType.getText().toString();
-        int age = Integer.parseInt(etAge.getText().toString());
-        double weight = Double.parseDouble(etWeight.getText().toString());
-        Bitmap animalBitmap = null;
-        if (imageUri != null) {
-            try {
-                animalBitmap  = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            } catch (IOException e) {
-                Log.e("AddActivity", "Error getting image bitmap", e);
-            }
-        }
-        Animal animal = new Animal(name, type, age, weight, animalBitmap);
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("animal", animal);
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
-        /*
-        Animal animal = new Animal(name, type, age, weight, animalBitmap);
-
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("name", name);
-        resultIntent.putExtra("type", type);
-        resultIntent.putExtra("age", age);
-        resultIntent.putExtra("weight", weight);
-        resultIntent.putExtra("image", animalBitmap);
-
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
-
-*/
-     private void saveAnimal() {
+     public void onSaveClick(View view) {
          String name = etName.getText().toString();
          String type = etType.getText().toString();
          int age = Integer.parseInt(etAge.getText().toString());
-         double weight = Double.parseDouble(etWeight.getText().toString());
-         Bitmap animalBitmap = null;
-         if (imageUri != null) {
-             try {
-                 animalBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-             } catch (IOException e) {
-                 Log.e("AddActivity", "Error getting image bitmap", e);
-             }
-         }
-         Animal animal = new Animal(name, type, age, weight, animalBitmap);
-         Intent resultIntent = new Intent();
-         resultIntent.putExtra("animal", animal);
-         setResult(Activity.RESULT_OK, resultIntent);
-         Toast.makeText(this, "Животное добавлено успешно!", Toast.LENGTH_SHORT).show();
+         float weight = Float.parseFloat(etWeight.getText().toString());
 
-         Intent intent = new Intent(this, MainActivity.class);
-         startActivity(intent); // запускаем MainActivity
-         finish(); // закрываем AddActivity
+         if (name.trim().isEmpty() || type.trim().isEmpty()) {
+             Toast.makeText(this, "Please enter animal name and type", Toast.LENGTH_SHORT).show();
+             return;
+         }
+
+         // Получаем Bitmap из ImageView
+         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
+         // Преобразуем Bitmap в массив байтов
+         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+         byte[] imageData = baos.toByteArray();
+
+         // передаю  в MainActivity
+         Intent resultIntent = new Intent();
+         resultIntent.putExtra("name", name);
+         resultIntent.putExtra("type", type);
+         resultIntent.putExtra("age", age);
+         resultIntent.putExtra("weight", weight);
+         resultIntent.putExtra("image", imageData);
+         setResult(Activity.RESULT_OK, resultIntent);
+         finish();
      }
  }
-
- /*
-        Toast.makeText(this, "Животное добавлено успешно!", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
-
-        }
-    }
-*/
 

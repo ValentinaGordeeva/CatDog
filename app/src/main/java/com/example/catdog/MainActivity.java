@@ -40,13 +40,9 @@ import com.bumptech.glide.Glide;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-
     private AnimalAdapter animalAdapter;
     private ArrayList<Animal> animalList = new ArrayList<>();
-    private List<Animal> animals = new ArrayList<>();
-
-    private AnimalAdapter adapter;
-    private static final int ADD_ANIMAL_REQUEST = 1;
+    private static final int REQUEST_CODE_ADD_ANIMAL  = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,71 +54,42 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(animalAdapter);
-        /*
-        Bitmap catBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
-        animalList.add(new Animal("Барсик", "Кошка", 3, 4.5, catBitmap));
-        animalAdapter.notifyDataSetChanged();
-
-      */
-
         FloatingActionButton addButton = findViewById(R.id.fab_add);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
 
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                startActivityForResult(intent, ADD_ANIMAL_REQUEST);
+                startActivityForResult(intent, REQUEST_CODE_ADD_ANIMAL );
             }
         });
     }
 
-    public void addAnimal(Animal animal) {
-        animalList.add(animal);
-        animalAdapter.notifyDataSetChanged();
-    }
+
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
- /*
-    if (requestCode == ADD_ANIMAL_REQUEST && resultCode == RESULT_OK) {
-        /*
-        String name = data.getStringExtra("name");
-        String type = data.getStringExtra("type");
-        int age = data.getIntExtra("age", 0);
-        double weight = data.getDoubleExtra("weight", 0);
-        Bitmap image = (Bitmap) data.getParcelableExtra("image");
+        if (requestCode == REQUEST_CODE_ADD_ANIMAL && resultCode == RESULT_OK) {
+            // Получаем данные из Intent
+            String name = data.getStringExtra("name");
+            String type = data.getStringExtra("type");
+            int age = data.getIntExtra("age", 0);
+            float weight = data.getFloatExtra("weight", 0.0f);
+            byte[] imageData = data.getByteArrayExtra("image");
 
-        Animal animal = new Animal(name, type, age, weight, image);
-        addAnimal(animal);
+            // Преобразуем массив байтов в Bitmap
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
 
+            // Создаем новый объект Animal
+            Animal animal = new Animal(name, type, age, weight, bitmap);
 
-        Animal animal = (Animal) data.getSerializableExtra("animal");
-        animalList.add(animal);
-        animalAdapter.notifyDataSetChanged();
+            // Добавляем объект Animal в список
+            animalList.add(animal);
 
-        Log.d("MainActivity", "Добавленное: " + animal.toString());
-    } else {
-        Log.d("MainActivity", "Резкльтат: " + resultCode);
-    }
-
-        }
-    protected void onPause() {
-        super.onPause();
-        Log.d("AddActivity", "onPause() called");
-    }
-    */
-
-        if (requestCode == ADD_ANIMAL_REQUEST && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                Animal animal = data.getParcelableExtra("animal");
-                if (animal != null) {
-                    animals.add(animal);
-                    animalAdapter.notifyDataSetChanged();
+            // Обновляем адаптер
+            animalAdapter.notifyDataSetChanged();
                 }
             }
         }
-    }
-}
-
