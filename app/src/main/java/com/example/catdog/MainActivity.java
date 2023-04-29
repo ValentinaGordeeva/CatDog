@@ -18,7 +18,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private DatabaseReference dbRef;
     private Uri imageUri;
+    private ImageView animalImageView;
 
 
     @Override
@@ -125,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(animalAdapter);
         FloatingActionButton addButton = findViewById(R.id.fab_add);
+        animalImageView =findViewById(R.id.animal_image_view);
 
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
         dbRef.addValueEventListener(new ValueEventListener() {
@@ -224,7 +228,9 @@ public class MainActivity extends AppCompatActivity {
 
                     // Создание объекта Animal
                     Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
-
+                    Glide.with(MainActivity.this)
+                            .load(animal.getImageUrl())
+                            .into(animalImageView);
                     // Добавление животного в список
                     animalList.add(animal);
                 }
@@ -365,22 +371,33 @@ public class MainActivity extends AppCompatActivity {
                 animalList.clear();
                 for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
                     Animal animal = animalSnapshot.getValue(Animal.class);
-                    String photoUrl = animal.getImageUrl();
-                    if (!TextUtils.isEmpty(photoUrl)) {
-                        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
-                        storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            animal.setImage(bitmap);
-                            animalList.add(animal);
-                            animalAdapter.notifyDataSetChanged();
-                        }).addOnFailureListener(e -> {
-                            Log.e(TAG, "Failed to load image.", e);
-                        });
-                    } else {
+                    String imageUri = animal.getImageUrl();
+
+
+                    // Загружаем изображение из Firebase Storage с использованием URL-адреса
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                    StorageReference imagesRef = storageRef.child("images");
+
+                    Glide.with(MainActivity.this)
+                            .load(animal.getImageUrl())
+                            .into(animalImageView);
+
+                    storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                        // Создаем Bitmap из массива байтов
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                        // Устанавливаем изображение в объект Animal
+                        animal.setImage(bitmap);
+
+                        // Добавляем объект Animal в список
                         animalList.add(animal);
-                    }
+
+                        // Обновляем адаптер
+                        animalAdapter.notifyDataSetChanged();
+                    }).addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to load image.", e);
+                    });
                 }
-                animalAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -388,5 +405,4 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "Failed to load animals.", error.toException());
             }
         });
-    }
-}
+    }}

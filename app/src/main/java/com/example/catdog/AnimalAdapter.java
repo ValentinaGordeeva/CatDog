@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 import com.bumptech.glide.Glide;
 
@@ -56,13 +59,21 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         }
 
         public void bind(Animal animal) {
+
               if (animal.getImage() != null) {
                 imageView.setImageBitmap(animal.getImage());
             } else {
                 // здесь можно установить другое изображение-заполнитель
                 imageView.setImageResource(R.drawable.cat);
             }
+            /*
+            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(animal.getImageUrl());
 
+            // Загружаем изображение из Firebase Storage в ImageView с помощью Glide
+            Glide.with(itemView.getContext())
+                    .load(storageRef)
+                    .into(imageView);
+                    */
 
             tvName.setText(animal.getName());
             tvType.setText(animal.getType());
