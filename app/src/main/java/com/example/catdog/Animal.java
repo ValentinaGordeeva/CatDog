@@ -17,17 +17,18 @@ public class Animal implements Parcelable {
     private String type;
     private int age;
     private double weight;
-    private String photoUrl;
+    // private String photoUrl;
+    private String imageUrl;
     private Bitmap image;
 
     public Animal() {}
-    public Animal(String id, String name, String type, int age, double weight, String photoUrl) {
+    public Animal(String id, String name, String type, int age, double weight, String imageUrl) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.age = age;
         this.weight = weight;
-        this.photoUrl = photoUrl;
+        this.imageUrl = imageUrl;
     }
 
     protected Animal(Parcel in) {
@@ -36,7 +37,7 @@ public class Animal implements Parcelable {
         type = in.readString();
         age = in.readInt();
         weight = in.readDouble();
-        photoUrl = in.readString();
+        imageUrl = in.readString();
     }
 
     public static final Creator<Animal> CREATOR = new Creator<Animal>() {
@@ -71,12 +72,12 @@ public class Animal implements Parcelable {
         return weight;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public String getImageUrl() {
+        return  imageUrl;
     }
 
-    public void setImageURL(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setImageURL(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
@@ -97,7 +98,7 @@ public class Animal implements Parcelable {
         parcel.writeString(type);
         parcel.writeInt(age);
         parcel.writeDouble(weight);
-        parcel.writeString(photoUrl);
+        parcel.writeString(imageUrl);
     }
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -106,7 +107,7 @@ public class Animal implements Parcelable {
         result.put("type", type);
         result.put("age", age);
         result.put("weight", weight);
-        result.put("imageUrls", photoUrl);
+        result.put("imageUrls", imageUrl);
 
         return result;
     }

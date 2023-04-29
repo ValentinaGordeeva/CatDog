@@ -138,10 +138,11 @@ public class MainActivity extends AppCompatActivity {
                     Animal animal = animalSnapshot.getValue(Animal.class);
 
                     // Получаем URL-адрес изображения из объекта Animal
-                    String imageUrl = animal.getPhotoUrl();
+                    String imageUrl= animal.getImageUrl();
 
                     // Загружаем изображение из Firebase Storage с использованием URL-адреса
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    //StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(animal.getImageUrl());
                     storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
                         // Создаем Bitmap из массива байтов
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -363,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
                 animalList.clear();
                 for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
                     Animal animal = animalSnapshot.getValue(Animal.class);
-                    String photoUrl = animal.getPhotoUrl();
+                    String photoUrl = animal.getImageUrl();
                     if (!TextUtils.isEmpty(photoUrl)) {
                         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
                         storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
