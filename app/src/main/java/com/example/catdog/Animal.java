@@ -7,13 +7,15 @@ import android.os.Parcelable;
 
 public class Animal implements Parcelable {
 
+    private String id;
     private String name;
     private String type;
     private int age;
     private double  weight;
     private Bitmap image;
-    public Animal(String name, String type, int age, double weight, Bitmap image) {
+    public Animal(String id,String name, String type, int age, double weight, Bitmap image) {
 
+        this.id=id;
         this.name = name;
         this.type = type;
         this.age = age;
@@ -39,6 +41,9 @@ public class Animal implements Parcelable {
             return new Animal[size];
         }
     };
+    public String getId() {
+        return id;
+    }
     public String getName() {
         return name;
     }

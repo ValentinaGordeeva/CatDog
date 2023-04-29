@@ -8,14 +8,13 @@
     <ImageView
         android:id="@+id/animal_image_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        />
+        android:layout_height="46dp"
+        android:scaleType="centerCrop" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="317dp" />
+        android:layout_height="321dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
