@@ -141,8 +141,9 @@ public class MainActivity extends AppCompatActivity {
                     String imageUrl= animal.getImageUrl();
 
                     // Загружаем изображение из Firebase Storage с использованием URL-адреса
-                    //StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(animal.getImageUrl());
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                    StorageReference imagesRef = storageRef.child("images");
+
                     storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
                         // Создаем Bitmap из массива байтов
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);

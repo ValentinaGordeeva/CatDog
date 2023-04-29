@@ -18,17 +18,17 @@ public class Animal implements Parcelable {
     private int age;
     private double weight;
     // private String photoUrl;
-    private String imageUrl;
+    private String imageUri;
     private Bitmap image;
 
     public Animal() {}
-    public Animal(String id, String name, String type, int age, double weight, String imageUrl) {
+    public Animal(String id, String name, String type, int age, double weight, String imageUri) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.age = age;
         this.weight = weight;
-        this.imageUrl = imageUrl;
+        this.imageUri = imageUri;
     }
 
     protected Animal(Parcel in) {
@@ -37,7 +37,7 @@ public class Animal implements Parcelable {
         type = in.readString();
         age = in.readInt();
         weight = in.readDouble();
-        imageUrl = in.readString();
+        imageUri = in.readString();
     }
 
     public static final Creator<Animal> CREATOR = new Creator<Animal>() {
@@ -73,11 +73,11 @@ public class Animal implements Parcelable {
     }
 
     public String getImageUrl() {
-        return  imageUrl;
+        return imageUri;
     }
 
-    public void setImageURL(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class Animal implements Parcelable {
         parcel.writeString(type);
         parcel.writeInt(age);
         parcel.writeDouble(weight);
-        parcel.writeString(imageUrl);
+        parcel.writeString(imageUri);
     }
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -107,7 +107,7 @@ public class Animal implements Parcelable {
         result.put("type", type);
         result.put("age", age);
         result.put("weight", weight);
-        result.put("imageUrls", imageUrl);
+        result.put("imageUrls", imageUri);
 
         return result;
     }
