@@ -5,6 +5,10 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class Animal implements Parcelable {
 
     private String id;
@@ -12,15 +16,20 @@ public class Animal implements Parcelable {
     private String type;
     private int age;
     private double  weight;
-    private Bitmap image;
-    public Animal(String id,String name, String type, int age, double weight, Bitmap image) {
+    // private Bitmap image;
+    private List<String> image;
+    private String imageURL;
+
+    public Animal(String id,String name, String type, int age, double weight,String imageURL) {
 
         this.id=id;
         this.name = name;
         this.type = type;
         this.age = age;
         this.weight=weight;
-        this.image=image;
+        //this.image=image;
+        this.image = new ArrayList<>();
+        this.image.add(imageURL);
 
     }
 
@@ -62,8 +71,15 @@ public class Animal implements Parcelable {
         return weight;
     }
 
-    public Bitmap getImage() {
-        return image;}
+ //   public Bitmap getImage() {
+   //     return image;}
+ public List<String> getImage() {
+     return image;
+ }
+
+    public void setImage(List<String> image) {
+        this.image = image;
+    }
     public int describeContents() {
         return 0;
     }
@@ -72,7 +88,7 @@ public class Animal implements Parcelable {
         parcel.writeString(type);
         parcel.writeInt(age);
         parcel.writeDouble(weight);
-        parcel.writeParcelable(image, i);
+      //  parcel.writeParcelable(image, i);
     }
 /*
     public Animal(String name, String type, int age, double weight, Bitmap image) {

@@ -56,12 +56,14 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         }
 
         public void bind(Animal animal) {
-            if (animal.getImage() != null) {
+            /*   if (animal.getImage() != null) {
                 imageView.setImageBitmap(animal.getImage());
             } else {
                 // здесь можно установить другое изображение-заполнитель
                 imageView.setImageResource(R.drawable.cat);
             }
+
+             */
             tvName.setText(animal.getName());
             tvType.setText(animal.getType());
             tvAge.setText("Возраст: " + animal.getAge());

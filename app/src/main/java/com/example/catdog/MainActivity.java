@@ -34,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -172,8 +173,10 @@ public class MainActivity extends AppCompatActivity {
             // Преобразуем массив байтов в Bitmap
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
             String animalId = data.getStringExtra("animalId");
+
+            List<String> images = new ArrayList<>();
             // Создаем новый объект Animal
-            Animal animal = new Animal(animalId,name, type, age, weight, bitmap);
+            Animal animal = new Animal(animalId,name, type, age, weight, images);
 
             // Сохраняем данные животного в Firebase
             saveAnimalToFirebase(animal);

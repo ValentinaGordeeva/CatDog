@@ -46,14 +46,16 @@ import java.io.IOException;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
- public class AddActivity extends AppCompatActivity {
+public class AddActivity extends AppCompatActivity {
 
      private EditText etName, etType, etAge, etWeight;
      private Button btnAdd;
      private Button btnAddPhoto;
      private ImageView imageView;
+
      private static final int REQUEST_CODE_PICK_IMAGE = 1;
 
      @Override
@@ -75,6 +77,8 @@ import java.util.List;
 
                  Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                  startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
+
+
 
              }
          });
@@ -130,6 +134,33 @@ import java.util.List;
          bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
          byte[] imageData = baos.toByteArray();
 
+         FirebaseStorage storage = FirebaseStorage.getInstance();
+         StorageReference storageRef = storage.getReference();
+         String filename = UUID.randomUUID().toString() + ".jpg";
+         StorageReference imageRef = storageRef.child("images/" + filename);
+         imageRef.putBytes(imageData).addOnSuccessListener(taskSnapshot -> {
+             // Файл был успешно загружен
+             Toast.makeText(this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
+
+             // Получаем ссылку на загруженный файл в Firebase Storage
+             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                 String imageURL = uri.toString();
+                 // Сохраняем данные о животном и ссылку на файл в Firebase Realtime Database
+                 DatabaseReference animalsRef = FirebaseDatabase.getInstance().getReference("animals");
+                 String animalId = animalsRef.push().getKey();
+                 Animal animal = new Animal(animalId, name, type, age, weight, imageURL);
+                 animalsRef.child(animalId).setValue(animal);
+
+                 // Передаем данные о животном в MainActivity
+                 Intent resultIntent = new Intent();
+                 resultIntent.putExtra("animal", animal);
+                 setResult(Activity.RESULT_OK, resultIntent);
+                 finish();
+             });}).addOnFailureListener(exception -> {
+             // Обработка ошибки загрузки файла
+             Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
+         });
+                 /*
          // передаю  в MainActivity
          Intent resultIntent = new Intent();
          resultIntent.putExtra("name", name);
@@ -139,6 +170,10 @@ import java.util.List;
          resultIntent.putExtra("image", imageData);
          setResult(Activity.RESULT_OK, resultIntent);
          finish();
+
+                  */
      }
+
+
  }
 
