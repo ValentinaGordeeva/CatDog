@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -124,6 +125,46 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(animalAdapter);
         FloatingActionButton addButton = findViewById(R.id.fab_add);
+
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                animalList.clear(); // очищаем список животных
+
+                // Проходим по всем дочерним узлам "animals"
+                for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
+                    // Получаем объект Animal из снепшота
+                    Animal animal = animalSnapshot.getValue(Animal.class);
+
+                    // Получаем URL-адрес изображения из объекта Animal
+                    String imageUrl = animal.getImageURL();
+
+                    // Загружаем изображение из Firebase Storage с использованием URL-адреса
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                        // Создаем Bitmap из массива байтов
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                        // Устанавливаем изображение в объект Animal
+                        animal.setImage(bitmap);
+
+                        // Добавляем объект Animal в список
+                        animalList.add(animal);
+
+                        // Обновляем адаптер
+                        animalAdapter.notifyDataSetChanged();
+                    }).addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to load image.", e);
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Failed to load animals.", error.toException());
+            }
+        });
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,36 +301,29 @@ public class MainActivity extends AppCompatActivity {
             StorageReference imagesRef = storage.getReference().child("images/" + animalId + ".jpg");
 
             UploadTask uploadTask = imagesRef.putBytes(imageData);
-            uploadTask.addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    imagesRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String imageUrl = uri.toString();
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                imagesRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String imageUrl = uri.toString();
 
-                        // Создаем новый объект Animal с URL-адресом изображения
-                        Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
+                    // Создаем новый объект Animal с URL-адресом изображения
+                    Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
 
-                        // Сохраняем данные животного в Firebase Realtime Database
-                        saveAnimalToFirebase(animal);
+                    // Сохраняем данные животного в Firebase Realtime Database
+                    saveAnimalToFirebase(animal);
 
-                        // Добавляем объект Animal в список
-                        animalList.add(animal);
+                    // Добавляем объект Animal в список
+                    animalList.add(animal);
 
-                        // Обновляем адаптер
-                        animalAdapter.notifyDataSetChanged();
-                    }).addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to get download URL.", e);
-                    });
-                } else {
-                    Log.e(TAG, "Failed to upload image.");
-                }
+                    // Обновляем адаптер
+                    animalAdapter.notifyDataSetChanged();
+                }).addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to get download URL.", e);
+                });
+            }).addOnFailureListener(e -> {
+                Log.e(TAG, "Failed to upload image.", e);
             });
         }
     }
-
-
-
-
-
 
 
     private void saveAnimalToFirebase(Animal animal) {
@@ -317,5 +351,37 @@ public class MainActivity extends AppCompatActivity {
         // Получаем ссылку на базу данных Firebase Realtime Database
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
         dbRef.child(animal.getId()).setValue(animal.toMap());
+    }
+    private void loadAnimalsFromFirebase() {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                animalList.clear();
+                for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
+                    Animal animal = animalSnapshot.getValue(Animal.class);
+                    String imageUrl = animal.getImageURL();
+                    if (!TextUtils.isEmpty(imageUrl)) {
+                        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                        storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            animal.setImage(bitmap);
+                            animalList.add(animal);
+                            animalAdapter.notifyDataSetChanged();
+                        }).addOnFailureListener(e -> {
+                            Log.e(TAG, "Failed to load image.", e);
+                        });
+                    } else {
+                        animalList.add(animal);
+                    }
+                }
+                animalAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Failed to load animals.", error.toException());
+            }
+        });
     }
 }

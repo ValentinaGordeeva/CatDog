@@ -18,7 +18,9 @@ public class Animal implements Parcelable {
     private int age;
     private double weight;
     private String imageURL;
+    private Bitmap image;
 
+    public Animal() {}
     public Animal(String id, String name, String type, int age, double weight, String imageURL) {
         this.id = id;
         this.name = name;
@@ -81,7 +83,13 @@ public class Animal implements Parcelable {
     public int describeContents() {
         return 0;
     }
+    public Bitmap getImage() {
+        return image;
+    }
 
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(id);
