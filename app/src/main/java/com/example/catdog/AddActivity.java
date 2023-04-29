@@ -154,16 +154,14 @@ public class AddActivity extends AppCompatActivity {
          byte[] imageData = baos.toByteArray();
 
          */
-         String imageFilePath = data.getStringExtra("imageFilePath");
 
          // Получаем ссылку на Firebase Storage
          FirebaseStorage storage = FirebaseStorage.getInstance();
          StorageReference storageRef = storage.getReference();
-
+         StorageReference imageRef = storageRef.child("images/" + selectedImageUri.getLastPathSegment());
+         UploadTask uploadTask = imageRef.putFile(selectedImageUri);
          // Загружаем изображение животного в Firebase Storage
-         Uri file = Uri.fromFile(new File(imageFilePath));
-         StorageReference imageRef = storageRef.child("images/" + file.getLastPathSegment());
-         UploadTask uploadTask = imageRef.putFile(file);
+
 
          uploadTask.addOnSuccessListener(taskSnapshot -> {
              // Получаем URL-адрес загруженного файла
@@ -171,8 +169,8 @@ public class AddActivity extends AppCompatActivity {
                  String imageURL = uri.toString();
 
                  // Получаем список URL-адресов изображений
-                 List<String> imageUrls = new ArrayList<>();
-                 imageUrls.add(imageURL);
+                 String imageUrls= uri.toString();
+
 
                  // Создаем новый объект Animal
                  Animal animal = new Animal(null, name, type, age, weight, imageUrls);
@@ -208,7 +206,7 @@ public class AddActivity extends AppCompatActivity {
 
          // Сохраняем данные животного в Firebase Database
          String key = databaseRef.push().getKey();
-         Animal newAnimal = new Animal(key, animal.getName(), animal.getType(), animal.getAge(), animal.getWeight(), animal.getImageUrls());
+         Animal newAnimal = new Animal(key, animal.getName(), animal.getType(), animal.getAge(), animal.getWeight(), animal.getImageURL());
          databaseRef.child(key).setValue(newAnimal);
      }
 

@@ -235,11 +235,12 @@ public class MainActivity extends AppCompatActivity {
             byte[] imageData = data.getByteArrayExtra("image");
             String animalId = data.getStringExtra("animalId");
 
+
             // Сохраняем изображение в Firebase Storage
-            saveImageToFirebaseStorage(imageData, animalId);
+            saveImageToFirebaseStorage(imageData, animalId, name, type, age, weight);
 
             // Создаем новый объект Animal
-            Animal animal = new Animal(animalId, name, type, age, weight);
+            Animal animal = new Animal(animalId, name, type, age, weight,null);
 
             // Сохраняем данные животного в Firebase Realtime Database
             saveAnimalToFirebase(animal);
@@ -251,20 +252,45 @@ public class MainActivity extends AppCompatActivity {
             animalAdapter.notifyDataSetChanged();
         }
 
-    }private void saveImageToFirebaseStorage(byte[] imageData, String animalId) {
-        // Создаем ссылку на место хранения изображения в Firebase Storage
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference imageRef = storageRef.child("images/" + animalId + ".jpg");
-
-        // Загружаем изображение в Firebase Storage
-        UploadTask uploadTask = imageRef.putBytes(imageData);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e(TAG, "Failed to upload image.", e);
-            }
-        });
     }
+
+    private void saveImageToFirebaseStorage(byte[] imageData, String animalId, String name, String type, int age, float weight) {
+        if (imageData != null) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference imagesRef = storage.getReference().child("images/" + animalId + ".jpg");
+
+            UploadTask uploadTask = imagesRef.putBytes(imageData);
+            uploadTask.addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    imagesRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String imageUrl = uri.toString();
+
+                        // Создаем новый объект Animal с URL-адресом изображения
+                        Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
+
+                        // Сохраняем данные животного в Firebase Realtime Database
+                        saveAnimalToFirebase(animal);
+
+                        // Добавляем объект Animal в список
+                        animalList.add(animal);
+
+                        // Обновляем адаптер
+                        animalAdapter.notifyDataSetChanged();
+                    }).addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to get download URL.", e);
+                    });
+                } else {
+                    Log.e(TAG, "Failed to upload image.");
+                }
+            });
+        }
+    }
+
+
+
+
+
+
 
     private void saveAnimalToFirebase(Animal animal) {
         /*
@@ -289,9 +315,7 @@ public class MainActivity extends AppCompatActivity {
 
          */
         // Получаем ссылку на базу данных Firebase Realtime Database
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-
-        // Сохраняем данные животного в Firebase Realtime Database
-        dbRef.child("animals").child(animal.getId()).setValue(animal.toMap());
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
+        dbRef.child(animal.getId()).setValue(animal.toMap());
     }
 }
