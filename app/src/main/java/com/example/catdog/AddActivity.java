@@ -3,6 +3,8 @@ package com.example.catdog;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -55,7 +57,12 @@ public class AddActivity extends AppCompatActivity {
      private Button btnAdd;
      private Button btnAddPhoto;
      private ImageView imageView;
+    private Uri imageUri;
+    private Intent resultIntent;
 
+
+    private Uri selectedImageUri;
+    private Intent data;
      private static final int REQUEST_CODE_PICK_IMAGE = 1;
 
      @Override
@@ -70,6 +77,7 @@ public class AddActivity extends AppCompatActivity {
          btnAdd = findViewById(R.id.btnAdd);
          btnAddPhoto = findViewById(R.id.btnAddPhoto);
          imageView = findViewById(R.id.imageView);
+
 
          btnAddPhoto.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -95,7 +103,7 @@ public class AddActivity extends AppCompatActivity {
 
      protected void onActivityResult(int requestCode, int resultCode, Intent data) {
          super.onActivityResult(requestCode, resultCode, data);
-
+/*
          if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
              Uri imageUri = data.getData();
              Bitmap bitmap = null;
@@ -107,6 +115,17 @@ public class AddActivity extends AppCompatActivity {
 
              // Устанавливаем выбранное изображение в ImageView
              imageView.setImageBitmap(bitmap);
+         }
+
+ */if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK) {
+             // Получаем URI выбранного изображения
+             selectedImageUri = data.getData();
+
+             // Отображаем выбранное изображение в ImageView
+             imageView.setImageURI(selectedImageUri);
+
+             // Сохраняем данные Intent для передачи в onSaveClick
+             this.data = data;
          }
      }
      public void onBackPressed() {
@@ -127,39 +146,49 @@ public class AddActivity extends AppCompatActivity {
          }
 
          // Получаем Bitmap из ImageView
-         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        /* Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
          // Преобразуем Bitmap в массив байтов
          ByteArrayOutputStream baos = new ByteArrayOutputStream();
          bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
          byte[] imageData = baos.toByteArray();
 
+         */
+         String imageFilePath = data.getStringExtra("imageFilePath");
+
+         // Получаем ссылку на Firebase Storage
          FirebaseStorage storage = FirebaseStorage.getInstance();
          StorageReference storageRef = storage.getReference();
-         String filename = UUID.randomUUID().toString() + ".jpg";
-         StorageReference imageRef = storageRef.child("images/" + filename);
-         imageRef.putBytes(imageData).addOnSuccessListener(taskSnapshot -> {
-             // Файл был успешно загружен
-             Toast.makeText(this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
 
-             // Получаем ссылку на загруженный файл в Firebase Storage
+         // Загружаем изображение животного в Firebase Storage
+         Uri file = Uri.fromFile(new File(imageFilePath));
+         StorageReference imageRef = storageRef.child("images/" + file.getLastPathSegment());
+         UploadTask uploadTask = imageRef.putFile(file);
+
+         uploadTask.addOnSuccessListener(taskSnapshot -> {
+             // Получаем URL-адрес загруженного файла
              imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                  String imageURL = uri.toString();
-                 // Сохраняем данные о животном и ссылку на файл в Firebase Realtime Database
-                 DatabaseReference animalsRef = FirebaseDatabase.getInstance().getReference("animals");
-                 String animalId = animalsRef.push().getKey();
-                 Animal animal = new Animal(animalId, name, type, age, weight, imageURL);
-                 animalsRef.child(animalId).setValue(animal);
+
+                 // Получаем список URL-адресов изображений
+                 List<String> imageUrls = new ArrayList<>();
+                 imageUrls.add(imageURL);
+
+                 // Создаем новый объект Animal
+                 Animal animal = new Animal(null, name, type, age, weight, imageUrls);
+                 saveAnimalToFirebase(animal);
 
                  // Передаем данные о животном в MainActivity
                  Intent resultIntent = new Intent();
                  resultIntent.putExtra("animal", animal);
                  setResult(Activity.RESULT_OK, resultIntent);
                  finish();
-             });}).addOnFailureListener(exception -> {
+             });
+         }).addOnFailureListener(exception -> {
              // Обработка ошибки загрузки файла
              Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
          });
+
                  /*
          // передаю  в MainActivity
          Intent resultIntent = new Intent();
@@ -172,6 +201,15 @@ public class AddActivity extends AppCompatActivity {
          finish();
 
                   */
+     }
+     private void saveAnimalToFirebase(Animal animal) {
+         FirebaseDatabase database = FirebaseDatabase.getInstance();
+         DatabaseReference databaseRef = database.getReference("animals");
+
+         // Сохраняем данные животного в Firebase Database
+         String key = databaseRef.push().getKey();
+         Animal newAnimal = new Animal(key, animal.getName(), animal.getType(), animal.getAge(), animal.getWeight(), animal.getImageUrls());
+         databaseRef.child(key).setValue(newAnimal);
      }
 
 

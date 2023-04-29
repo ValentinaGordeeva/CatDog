@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -31,6 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_ADD_ANIMAL  = 1;
     private FirebaseFirestore db;
     private DatabaseReference dbRef;
+    private Uri imageUri;
 
 
     @Override
@@ -131,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
  dbRef.addValueEventListener(new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
+            /*
             // Очистка списка животных
             animalList.clear();
 
@@ -158,10 +164,42 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "Failed to read value.", error.toException());
         }
     });
+
+             */
+            animalList.clear();
+
+            // Получение списка животных из Firebase Realtime Database
+            for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
+                String animalId = animalSnapshot.getKey();
+                String name = animalSnapshot.child("name").getValue(String.class);
+                String type = animalSnapshot.child("type").getValue(String.class);
+                int age = animalSnapshot.child("age").getValue(Integer.class);
+                float weight = animalSnapshot.child("weight").getValue(Float.class);
+
+                // Получение URL-адреса изображения животного
+                String imageUrl = animalSnapshot.child("imageUrl").getValue(String.class);
+
+                // Создание объекта Animal
+                Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
+
+                // Добавление животного в список
+                animalList.add(animal);
+            }
+
+            // Обновление адаптера
+            animalAdapter.notifyDataSetChanged();
+        }
+
+     @Override
+     public void onCancelled(DatabaseError error) {
+         Log.e(TAG, "Failed to read value.", error.toException());
+     }
+ });
 }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        /*
         if (requestCode == REQUEST_CODE_ADD_ANIMAL && resultCode == RESULT_OK) {
             // Получаем данные из Intent
             String name = data.getStringExtra("name");
@@ -187,9 +225,49 @@ public class MainActivity extends AppCompatActivity {
             // Обновляем адаптер
             animalAdapter.notifyDataSetChanged();
         }
+
+         */if (requestCode == REQUEST_CODE_ADD_ANIMAL && resultCode == RESULT_OK) {
+            // Получаем данные из Intent
+            String name = data.getStringExtra("name");
+            String type = data.getStringExtra("type");
+            int age = data.getIntExtra("age", 0);
+            float weight = data.getFloatExtra("weight", 0.0f);
+            byte[] imageData = data.getByteArrayExtra("image");
+            String animalId = data.getStringExtra("animalId");
+
+            // Сохраняем изображение в Firebase Storage
+            saveImageToFirebaseStorage(imageData, animalId);
+
+            // Создаем новый объект Animal
+            Animal animal = new Animal(animalId, name, type, age, weight);
+
+            // Сохраняем данные животного в Firebase Realtime Database
+            saveAnimalToFirebase(animal);
+
+            // Добавляем объект Animal в список
+            animalList.add(animal);
+
+            // Обновляем адаптер
+            animalAdapter.notifyDataSetChanged();
+        }
+
+    }private void saveImageToFirebaseStorage(byte[] imageData, String animalId) {
+        // Создаем ссылку на место хранения изображения в Firebase Storage
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("images/" + animalId + ".jpg");
+
+        // Загружаем изображение в Firebase Storage
+        UploadTask uploadTask = imageRef.putBytes(imageData);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Failed to upload image.", e);
+            }
+        });
     }
 
     private void saveAnimalToFirebase(Animal animal) {
+        /*
         // Получаем ссылку на коллекцию животных
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
@@ -208,4 +286,12 @@ public class MainActivity extends AppCompatActivity {
         dbRef.push().setValue(animal);
 
 }
+
+         */
+        // Получаем ссылку на базу данных Firebase Realtime Database
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+
+        // Сохраняем данные животного в Firebase Realtime Database
+        dbRef.child("animals").child(animal.getId()).setValue(animal.toMap());
+    }
 }

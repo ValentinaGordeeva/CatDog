@@ -17,10 +17,10 @@ public class Animal implements Parcelable {
     private int age;
     private double  weight;
     // private Bitmap image;
-    private List<String> image;
-    private String imageURL;
+    private List<String> imageURL;
+    //private String imageURL;
 
-    public Animal(String id,String name, String type, int age, double weight,String imageURL) {
+    public Animal(String id,String name, String type, int age, double weight,List<String> imageURL) {
 
         this.id=id;
         this.name = name;
@@ -28,8 +28,7 @@ public class Animal implements Parcelable {
         this.age = age;
         this.weight=weight;
         //this.image=image;
-        this.image = new ArrayList<>();
-        this.image.add(imageURL);
+        this.imageURL = imageURL;
 
     }
 
@@ -38,9 +37,10 @@ public class Animal implements Parcelable {
         type =in.readString();
         age = in.readInt();
         weight=in.readDouble();
-        image=in.readParcelable(Bitmap.class.getClassLoader());
-
+       //image=in.readParcelable(Bitmap.class.getClassLoader());
+        imageURL=in.createStringArrayList();
     }
+
     public static final Creator<Animal> CREATOR = new Creator<Animal>() {
         @Override
         public Animal createFromParcel(Parcel in) {
@@ -73,12 +73,12 @@ public class Animal implements Parcelable {
 
  //   public Bitmap getImage() {
    //     return image;}
- public List<String> getImage() {
-     return image;
+ public List<String> getImageUrls() {
+     return imageURL;
  }
 
-    public void setImage(List<String> image) {
-        this.image = image;
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageURL = imageUrls;
     }
     public int describeContents() {
         return 0;
