@@ -206,7 +206,7 @@ public class AddActivity extends AppCompatActivity {
 
          // Сохраняем данные животного в Firebase Database
          String key = databaseRef.push().getKey();
-         Animal newAnimal = new Animal(key, animal.getName(), animal.getType(), animal.getAge(), animal.getWeight(), animal.getImageURL());
+         Animal newAnimal = new Animal(key, animal.getName(), animal.getType(), animal.getAge(), animal.getWeight(), animal.getPhotoUrl());
          databaseRef.child(key).setValue(newAnimal);
      }
 

@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AnimalAdapter animalAdapter;
     private ArrayList<Animal> animalList = new ArrayList<>();
-    private static final int REQUEST_CODE_ADD_ANIMAL  = 1;
+    private static final int REQUEST_CODE_ADD_ANIMAL = 1;
     private FirebaseFirestore db;
     private DatabaseReference dbRef;
     private Uri imageUri;
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     Animal animal = animalSnapshot.getValue(Animal.class);
 
                     // Получаем URL-адрес изображения из объекта Animal
-                    String imageUrl = animal.getImageURL();
+                    String imageUrl = animal.getPhotoUrl();
 
                     // Загружаем изображение из Firebase Storage с использованием URL-адреса
                     StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
@@ -169,14 +169,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_ADD_ANIMAL );
+                startActivityForResult(intent, REQUEST_CODE_ADD_ANIMAL);
             }
         });
 
 
- dbRef.addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
             /*
             // Очистка списка животных
             animalList.clear();
@@ -207,36 +207,37 @@ public class MainActivity extends AppCompatActivity {
     });
 
              */
-            animalList.clear();
+                animalList.clear();
 
-            // Получение списка животных из Firebase Realtime Database
-            for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
-                String animalId = animalSnapshot.getKey();
-                String name = animalSnapshot.child("name").getValue(String.class);
-                String type = animalSnapshot.child("type").getValue(String.class);
-                int age = animalSnapshot.child("age").getValue(Integer.class);
-                float weight = animalSnapshot.child("weight").getValue(Float.class);
+                // Получение списка животных из Firebase Realtime Database
+                for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
+                    String animalId = animalSnapshot.getKey();
+                    String name = animalSnapshot.child("name").getValue(String.class);
+                    String type = animalSnapshot.child("type").getValue(String.class);
+                    int age = animalSnapshot.child("age").getValue(Integer.class);
+                    float weight = animalSnapshot.child("weight").getValue(Float.class);
 
-                // Получение URL-адреса изображения животного
-                String imageUrl = animalSnapshot.child("imageUrl").getValue(String.class);
+                    // Получение URL-адреса изображения животного
+                    String imageUrl = animalSnapshot.child("imageUrl").getValue(String.class);
 
-                // Создание объекта Animal
-                Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
+                    // Создание объекта Animal
+                    Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
 
-                // Добавление животного в список
-                animalList.add(animal);
+                    // Добавление животного в список
+                    animalList.add(animal);
+                }
+
+                // Обновление адаптера
+                animalAdapter.notifyDataSetChanged();
             }
 
-            // Обновление адаптера
-            animalAdapter.notifyDataSetChanged();
-        }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
 
-     @Override
-     public void onCancelled(DatabaseError error) {
-         Log.e(TAG, "Failed to read value.", error.toException());
-     }
- });
-}
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -267,7 +268,8 @@ public class MainActivity extends AppCompatActivity {
             animalAdapter.notifyDataSetChanged();
         }
 
-         */if (requestCode == REQUEST_CODE_ADD_ANIMAL && resultCode == RESULT_OK) {
+         */
+        if (requestCode == REQUEST_CODE_ADD_ANIMAL && resultCode == RESULT_OK) {
             // Получаем данные из Intent
             String name = data.getStringExtra("name");
             String type = data.getStringExtra("type");
@@ -281,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
             saveImageToFirebaseStorage(imageData, animalId, name, type, age, weight);
 
             // Создаем новый объект Animal
-            Animal animal = new Animal(animalId, name, type, age, weight,null);
+            Animal animal = new Animal(animalId, name, type, age, weight, null);
 
             // Сохраняем данные животного в Firebase Realtime Database
             saveAnimalToFirebase(animal);
@@ -352,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
         dbRef.child(animal.getId()).setValue(animal.toMap());
     }
+
     private void loadAnimalsFromFirebase() {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
         dbRef.addValueEventListener(new ValueEventListener() {
@@ -360,9 +363,9 @@ public class MainActivity extends AppCompatActivity {
                 animalList.clear();
                 for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
                     Animal animal = animalSnapshot.getValue(Animal.class);
-                    String imageUrl = animal.getImageURL();
-                    if (!TextUtils.isEmpty(imageUrl)) {
-                        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    String photoUrl = animal.getPhotoUrl();
+                    if (!TextUtils.isEmpty(photoUrl)) {
+                        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
                         storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                             animal.setImage(bitmap);

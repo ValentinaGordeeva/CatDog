@@ -17,17 +17,17 @@ public class Animal implements Parcelable {
     private String type;
     private int age;
     private double weight;
-    private String imageURL;
+    private String photoUrl;
     private Bitmap image;
 
     public Animal() {}
-    public Animal(String id, String name, String type, int age, double weight, String imageURL) {
+    public Animal(String id, String name, String type, int age, double weight, String photoUrl) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.age = age;
         this.weight = weight;
-        this.imageURL = imageURL;
+        this.photoUrl = photoUrl;
     }
 
     protected Animal(Parcel in) {
@@ -36,7 +36,7 @@ public class Animal implements Parcelable {
         type = in.readString();
         age = in.readInt();
         weight = in.readDouble();
-        imageURL = in.readString();
+        photoUrl = in.readString();
     }
 
     public static final Creator<Animal> CREATOR = new Creator<Animal>() {
@@ -71,12 +71,12 @@ public class Animal implements Parcelable {
         return weight;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImageURL(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class Animal implements Parcelable {
         parcel.writeString(type);
         parcel.writeInt(age);
         parcel.writeDouble(weight);
-        parcel.writeString(imageURL);
+        parcel.writeString(photoUrl);
     }
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -106,7 +106,7 @@ public class Animal implements Parcelable {
         result.put("type", type);
         result.put("age", age);
         result.put("weight", weight);
-        result.put("imageUrls", imageURL);
+        result.put("imageUrls", photoUrl);
 
         return result;
     }
