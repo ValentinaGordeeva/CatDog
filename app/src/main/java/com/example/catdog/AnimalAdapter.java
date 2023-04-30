@@ -100,7 +100,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
             tvAge.setText("Возраст: " + animal.getAge());
             tvWeight.setText("Вес: " + animal.getWeight() + " кг");
             if (animal.getImageUrl() != null) {
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + animal.getImageUrl());
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images" + animal.getImageUrl());
                 long MAX_BYTES = 1024 * 1024;
                 storageRef.getBytes(MAX_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
