@@ -43,35 +43,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
 
         Animal animal = animals.get(position);
         holder.bind(animal);
-        /*
-        Animal animal =  animals.get(position);
-        holder.bind(animal);
-        holder.tvName.setText(animal.getName());
-        holder.tvType.setText(animal.getType());
-        holder.tvAge.setText(String.valueOf(animal.getAge()));
-        holder.tvWeight.setText(String.valueOf(animal.getWeight()));
 
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + animal.getImageUrl());
-        long MAX_BYTES = 1024 * 1024;
-        storageRef.getBytes(MAX_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                holder.imageView.setImageBitmap(bitmap);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure( Exception e) {
-                Log.e(TAG, "Failed to load image.", e);
-            }
-        });
-
-    }
-    @Override
-    public int getItemCount() {
-        return animals.size();
-
-         */
     }
     public int getItemCount() {
         return animals.size();
@@ -81,8 +53,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         public TextView tvType;
         public TextView tvAge;
         public TextView tvWeight;
-        // private TextView ivPhoto;
-        private ImageView imageView;
+               private ImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -95,38 +66,18 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
 
         public void bind(Animal animal) {
             Log.d("AnimalAdapter", "imageURL = " + animal.getImageUrl());
-            tvName.setText(animal.getName());
-            tvType.setText(animal.getType());
+            tvName.setText("Кличка:" + animal.getName());
+            tvType.setText("Тип: "+ animal.getType());
             tvAge.setText("Возраст: " + animal.getAge());
-            tvWeight.setText("Вес: " + animal.getWeight() + " кг");
+            tvWeight.setText("Вес: " + animal.getWeightFormatted() + " кг");
             if (animal.getImageUrl() != null) {
                 Glide.with(itemView.getContext())
                         .load(animal.getImageUrl())
                         .into(imageView);
             } else {
-                imageView.setImageResource(R.drawable.cat);
+                imageView.setImageResource(R.drawable.nophoto);
             }
-            /*
-            if (animal.getImageUrl() != null) {
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + animal.getImageUrl());
 
-                long MAX_BYTES = 1024 * 1024;
-                storageRef.getBytes(MAX_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        imageView.setImageBitmap(bitmap);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure( Exception e) {
-                        Log.e("AnimalAdapter", "Failed to load image.", e);
-                    }
-                });
-            }else {
-                imageView.setImageResource(R.drawable.cat);
-            }
-*/
 
         }
     }

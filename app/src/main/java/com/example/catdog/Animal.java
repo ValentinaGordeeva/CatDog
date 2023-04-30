@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -71,6 +72,9 @@ public class Animal implements Parcelable {
 
     public double getWeight() {
         return weight;
+    }
+    public String getWeightFormatted() {
+        return String.format(Locale.getDefault(), "%.2f", weight);
     }
 
     public String getImageUrl() {
