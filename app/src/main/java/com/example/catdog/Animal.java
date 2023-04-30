@@ -89,6 +89,7 @@ public class Animal implements Parcelable {
     }
 
     public void setImage(Bitmap image) {
+
         this.image = image;
     }
     @Override
