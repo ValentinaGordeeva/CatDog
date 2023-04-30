@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     private AnimalAdapter animalAdapter;
     private ArrayList<Animal> animalList = new ArrayList<>();
     private static final int REQUEST_CODE_ADD_ANIMAL = 1;
-    private FirebaseFirestore db;
+    //  private FirebaseFirestore db;
     private DatabaseReference dbRef;
     private Uri imageUri;
     private ImageView animalImageView;
@@ -118,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Получаем ссылку на базу данных Firebase
-        db = FirebaseFirestore.getInstance();
-        dbRef = FirebaseDatabase.getInstance().getReference("animals");
+       // db = FirebaseFirestore.getInstance();
+        //dbRef = FirebaseDatabase.getInstance().getReference("animals");
         animalList = new ArrayList<>();
 
         animalAdapter = new AnimalAdapter(animalList);
@@ -149,8 +149,20 @@ public class MainActivity extends AppCompatActivity {
 
                     // Загружаем изображение из Firebase Storage с использованием URL-адреса
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                    StorageReference imagesRef = storageRef.child("images/" + imageUrl);
+                      StorageReference imagesRef = storageRef.child("images/" + imageUrl);
 
+                    imagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String imageUrl = uri.toString();
+                            // Проверьте, что imageUrl содержит корректный путь к изображению
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Обработка ошибки получения URL-адреса загрузки
+                        }
+                    });
                     imagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
                         // Создаем Bitmap из массива байтов
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
