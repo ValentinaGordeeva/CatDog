@@ -21,8 +21,10 @@ import java.util.List;
 
 public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder> {
     private List<Animal> animals;
+    private Context context;
     public AnimalAdapter(List<Animal> animals) {
         this.animals = animals;
+        this.context = context;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -33,8 +35,19 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Animal animal = animals.get(position);
-        holder.bind(animal);
+      //  Animal animal = animals.get(position);
+       // holder.bind(animal);
+        Animal animal =  animals.get(position);
+
+        holder.tvName.setText(animal.getName());
+        holder.tvType.setText(animal.getType());
+        holder.tvAge.setText(String.valueOf(animal.getAge()));
+        holder.tvWeight.setText(String.valueOf(animal.getWeight()));
+
+        // Загружаем изображение с использованием Glide
+        Glide.with(context)
+                .load(animal.getImageUrl())
+                .into(holder.imageView);
     }
     @Override
     public int getItemCount() {

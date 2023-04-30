@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         // Получаем ссылку на базу данных Firebase
         db = FirebaseFirestore.getInstance();
         dbRef = FirebaseDatabase.getInstance().getReference("animals");
+        animalList = new ArrayList<>();
 
         animalAdapter = new AnimalAdapter(animalList);
         recyclerView = findViewById(R.id.recycler_view);
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(animalAdapter);
         FloatingActionButton addButton = findViewById(R.id.fab_add);
-        animalImageView =findViewById(R.id.animal_image_view);
+
 
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
         dbRef.addValueEventListener(new ValueEventListener() {
@@ -369,20 +370,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 animalList.clear();
+                //   DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
+                //  StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images");
+
                 for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
+                    // Получаем объект Animal из снепшота
                     Animal animal = animalSnapshot.getValue(Animal.class);
-                    String imageUri = animal.getImageUrl();
-
-
+                    animalList.add(animal);
+                    /*
+                    String imageUrl= animal.getImageUrl();
                     // Загружаем изображение из Firebase Storage с использованием URL-адреса
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                    StorageReference imagesRef = storageRef.child("images");
-
-                    Glide.with(MainActivity.this)
-                            .load(animal.getImageUrl())
-                            .into(animalImageView);
-
-                    storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                     StorageReference storageRef = imagesRef.child(animal.getImageUrl());
+                      Glide.with(MainActivity.this)
+                       .load(animal.getImageUrl())
+                     .into(animalImageView);
+                     storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
                         // Создаем Bitmap из массива байтов
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
@@ -398,6 +400,10 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "Failed to load image.", e);
                     });
                 }
+
+                     */
+                }
+                animalAdapter.notifyDataSetChanged();
             }
 
             @Override
