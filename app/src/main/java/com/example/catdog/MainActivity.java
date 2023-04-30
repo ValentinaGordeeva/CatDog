@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -121,20 +122,65 @@ public class MainActivity extends AppCompatActivity {
         // Получаем ссылку на базу данных Firebase
        // db = FirebaseFirestore.getInstance();
         //dbRef = FirebaseDatabase.getInstance().getReference("animals");
-        animalList = new ArrayList<>();
 
-        animalAdapter = new AnimalAdapter(animalList);
+
+        FloatingActionButton addButton = findViewById(R.id.fab_add);
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        animalList = new ArrayList<>();
+        animalAdapter = new AnimalAdapter(animalList);
         recyclerView.setAdapter(animalAdapter);
-        FloatingActionButton addButton = findViewById(R.id.fab_add);
-
 
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("animals");
-        DatabaseReference imageURLRef = databaseRef.child("animals").child("1").child("imageUrl");
+        ChildEventListener childEventListener= new ChildEventListener() { public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
+            Animal animal = dataSnapshot.getValue(Animal.class);
+            animalList.add(animal);
+            animalAdapter.notifyDataSetChanged();
+        }
 
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot,  String s) {
+                Animal animal = dataSnapshot.getValue(Animal.class);
+                for (int i = 0; i < animalList.size(); i++) {
+                    if (animalList.get(i).getKey().equals(dataSnapshot.getKey())) {
+                        animalList.set(i, animal);
+                        animalAdapter.notifyDataSetChanged();
+                        return;
+                    }
+                }
+            }
+
+
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                for (int i = 0; i < animalList.size(); i++) {
+                    if (animalList.get(i).getKey().equals(dataSnapshot.getKey())) {
+                        animalList.remove(i);
+                        animalAdapter.notifyDataSetChanged();
+                        return;
+                    }
+                }
+            }
+
+
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot,  String s) {
+                // Обработка перемещения данных
+            }
+
+
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Обработка ошибок чтения из базы данных
+                Log.e("MainActivity", "Failed to read animals.", databaseError.toException());
+            }
+        };
+
+        databaseRef.addChildEventListener(childEventListener);
+    }
+}
+
+
+        /*
 
         imageURLRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -181,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }}
 
-/*
+
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

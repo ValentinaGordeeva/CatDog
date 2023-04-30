@@ -27,10 +27,9 @@ import java.util.List;
 
 public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder> {
     private List<Animal> animals;
-    private Context context;
+
     public AnimalAdapter(List<Animal> animals) {
         this.animals = animals;
-        this.context = context;
     }
 
     @Override
@@ -101,6 +100,14 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
             tvAge.setText("Возраст: " + animal.getAge());
             tvWeight.setText("Вес: " + animal.getWeight() + " кг");
             if (animal.getImageUrl() != null) {
+                Glide.with(itemView.getContext())
+                        .load(animal.getImageUrl())
+                        .into(imageView);
+            } else {
+                imageView.setImageResource(R.drawable.cat);
+            }
+            /*
+            if (animal.getImageUrl() != null) {
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + animal.getImageUrl());
 
                 long MAX_BYTES = 1024 * 1024;
@@ -119,7 +126,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
             }else {
                 imageView.setImageResource(R.drawable.cat);
             }
-
+*/
 
         }
     }
