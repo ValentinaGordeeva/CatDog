@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -135,55 +136,19 @@ public class MainActivity extends AppCompatActivity {
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                animalList.clear(); // очищаем список животных
+                animalList.clear();
 
-                // Проходим по всем дочерним узлам "animals"
                 for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
-
-
-                    // Получаем объект Animal из снепшота
                     Animal animal = animalSnapshot.getValue(Animal.class);
-
-                    // Получаем URL-адрес изображения из объекта Animal
-                    String imageUrl = animal.getImageUrl();
-
-                    // Загружаем изображение из Firebase Storage с использованием URL-адреса
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                      StorageReference imagesRef = storageRef.child("images/" + imageUrl);
-
-                    imagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String imageUrl = uri.toString();
-                            // Проверьте, что imageUrl содержит корректный путь к изображению
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Обработка ошибки получения URL-адреса загрузки
-                        }
-                    });
-                    imagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
-                        // Создаем Bitmap из массива байтов
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-
-                        // Устанавливаем изображение в объект Animal
-                        animal.setImage(bitmap);
-
-                        // Добавляем объект Animal в список
-                        animalList.add(animal);
-
-                        // Обновляем адаптер
-                        animalAdapter.notifyDataSetChanged();
-                    }).addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to load image.", e);
-                    });
+                    animalList.add(animal);
                 }
+                animalAdapter.notifyDataSetChanged();
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Failed to load animals.", error.toException());
+                Toast.makeText(MainActivity.this, "Отображено ", Toast.LENGTH_SHORT).show();
             }
         });
         addButton.setOnClickListener(new View.OnClickListener() {

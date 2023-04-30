@@ -1,5 +1,9 @@
 package com.example.catdog;
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -10,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -36,8 +42,9 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-      //  Animal animal = animals.get(position);
-       // holder.bind(animal);
+        Animal animal = animals.get(position);
+        holder.bind(animal);
+        /*
         Animal animal =  animals.get(position);
         holder.bind(animal);
         holder.tvName.setText(animal.getName());
@@ -45,18 +52,31 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         holder.tvAge.setText(String.valueOf(animal.getAge()));
         holder.tvWeight.setText(String.valueOf(animal.getWeight()));
 
-        // Загружаем изображение с использованием Glide
-        Glide.with(context)
-                .load(animal.getImageUrl())
-                .into(holder.imageView);
-
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + animal.getImageUrl());
+        long MAX_BYTES = 1024 * 1024;
+        storageRef.getBytes(MAX_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                holder.imageView.setImageBitmap(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure( Exception e) {
+                Log.e(TAG, "Failed to load image.", e);
+            }
+        });
 
     }
     @Override
     public int getItemCount() {
         return animals.size();
-    }
 
+         */
+    }
+    public int getItemCount() {
+        return animals.size();
+    }
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvName;
         public TextView tvType;
@@ -75,17 +95,27 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         }
 
         public void bind(Animal animal) {
-
-              if (animal.getImage() != null) {
-                imageView.setImageBitmap(animal.getImage());
-            } else {
-                // здесь можно установить другое изображение-заполнитель
-                imageView.setImageResource(R.drawable.cat);
-            }
             tvName.setText(animal.getName());
             tvType.setText(animal.getType());
             tvAge.setText("Возраст: " + animal.getAge());
             tvWeight.setText("Вес: " + animal.getWeight() + " кг");
+            if (animal.getImageUrl() != null) {
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + animal.getImageUrl());
+                long MAX_BYTES = 1024 * 1024;
+                storageRef.getBytes(MAX_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        imageView.setImageBitmap(bitmap);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure( Exception e) {
+                        Log.e("AnimalAdapter", "Failed to load image.", e);
+                    }
+                });
+            }
+
         }
     }
 }
