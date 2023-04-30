@@ -108,7 +108,7 @@ public class Animal implements Parcelable {
         result.put("type", type);
         result.put("age", age);
         result.put("weight", weight);
-        result.put("imageUrls", imageUri);
+        result.put("imageUrl", imageUri);
 
         return result;
     }

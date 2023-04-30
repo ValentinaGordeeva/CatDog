@@ -95,12 +95,14 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         }
 
         public void bind(Animal animal) {
+            Log.d("AnimalAdapter", "imageURL = " + animal.getImageUrl());
             tvName.setText(animal.getName());
             tvType.setText(animal.getType());
             tvAge.setText("Возраст: " + animal.getAge());
             tvWeight.setText("Вес: " + animal.getWeight() + " кг");
             if (animal.getImageUrl() != null) {
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images" + animal.getImageUrl());
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + animal.getImageUrl());
+
                 long MAX_BYTES = 1024 * 1024;
                 storageRef.getBytes(MAX_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
@@ -114,7 +116,10 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
                         Log.e("AnimalAdapter", "Failed to load image.", e);
                     }
                 });
+            }else {
+                imageView.setImageResource(R.drawable.cat);
             }
+
 
         }
     }

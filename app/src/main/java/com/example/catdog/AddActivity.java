@@ -173,11 +173,11 @@ public class AddActivity extends AppCompatActivity {
                  String imageURL = uri.toString();
 
                  // Получаем список URL-адресов изображений
-                 String imageUrls= uri.toString();
+                // String imageUrls= uri.toString();
 
 
                  // Создаем новый объект Animal
-                 Animal animal = new Animal(null, name, type, age, weight, imageUrls);
+                 Animal animal = new Animal(null, name, type, age, weight, imageURL);
                  saveAnimalToFirebase(animal);
 
                  // Передаем данные о животном в MainActivity
@@ -208,7 +208,7 @@ public class AddActivity extends AppCompatActivity {
         // Проверяем, было ли выбрано изображение
         if (imageUri != null) {
             // Определяем путь в Firebase Storage, где будет храниться изображение
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + System.currentTimeMillis() + ".jpg");
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images" + System.currentTimeMillis() + ".jpg");
 
             // Загружаем изображение в Firebase Storage
             storageRef.putFile(imageUri)
@@ -217,7 +217,7 @@ public class AddActivity extends AppCompatActivity {
                         Task<Uri> downloadUrl = storageRef.getDownloadUrl();
                         downloadUrl.addOnSuccessListener(uri -> {
                             // Сохраняем URL изображения в базу данных
-                            String imageUrl = uri.toString();
+                            String imageUrl= uri.toString();
                             saveImageToFirebaseDatabase(imageUrl);
                         });
                     })
@@ -237,7 +237,7 @@ public class AddActivity extends AppCompatActivity {
         byte[] imageData = data.getByteArrayExtra("image");
         String animalId = data.getStringExtra("animalId");
         // Создаем новый объект CatDog с данными о животном
-        Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
+        Animal animal = new Animal(animalId, name, type, age, weight,imageUrl);
 
 
 

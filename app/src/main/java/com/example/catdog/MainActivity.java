@@ -133,6 +133,27 @@ public class MainActivity extends AppCompatActivity {
 
 
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("animals");
+        DatabaseReference imageURLRef = databaseRef.child("animals").child("1").child("imageUrl");
+
+
+        imageURLRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String imageUrl= dataSnapshot.getValue(String.class);
+                if (imageUrl != null) {
+                    // Используйте значение imageURL здесь
+                    Log.d(TAG, "imageURL is " + imageUrl);
+                } else {
+                    Log.d(TAG, "imageURL is NULL");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Обработка ошибок чтения из базы данных
+                Log.e(TAG, "Failed to read imageURL.", databaseError.toException());
+            }
+        });
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
