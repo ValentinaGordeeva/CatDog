@@ -26,6 +26,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         this.animals = animals;
         this.context = context;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_animal, parent, false);
@@ -38,7 +39,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
       //  Animal animal = animals.get(position);
        // holder.bind(animal);
         Animal animal =  animals.get(position);
-
+        holder.bind(animal);
         holder.tvName.setText(animal.getName());
         holder.tvType.setText(animal.getType());
         holder.tvAge.setText(String.valueOf(animal.getAge()));
@@ -48,6 +49,8 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
         Glide.with(context)
                 .load(animal.getImageUrl())
                 .into(holder.imageView);
+
+
     }
     @Override
     public int getItemCount() {
@@ -79,15 +82,6 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.ViewHolder
                 // здесь можно установить другое изображение-заполнитель
                 imageView.setImageResource(R.drawable.cat);
             }
-            /*
-            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(animal.getImageUrl());
-
-            // Загружаем изображение из Firebase Storage в ImageView с помощью Glide
-            Glide.with(itemView.getContext())
-                    .load(storageRef)
-                    .into(imageView);
-                    */
-
             tvName.setText(animal.getName());
             tvType.setText(animal.getType());
             tvAge.setText("Возраст: " + animal.getAge());

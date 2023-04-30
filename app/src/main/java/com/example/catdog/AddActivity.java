@@ -1,5 +1,7 @@
 package com.example.catdog;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
@@ -63,6 +66,7 @@ public class AddActivity extends AppCompatActivity {
 
     private Uri selectedImageUri;
     private Intent data;
+    private DatabaseReference mDatabase;
      private static final int REQUEST_CODE_PICK_IMAGE = 1;
 
      @Override
@@ -77,7 +81,7 @@ public class AddActivity extends AppCompatActivity {
          btnAdd = findViewById(R.id.btnAdd);
          btnAddPhoto = findViewById(R.id.btnAddPhoto);
          imageView = findViewById(R.id.imageView);
-
+         mDatabase = FirebaseDatabase.getInstance().getReference();
 
          btnAddPhoto.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -200,6 +204,49 @@ public class AddActivity extends AppCompatActivity {
 
                   */
      }
+    private void uploadImage() {
+        // Проверяем, было ли выбрано изображение
+        if (imageUri != null) {
+            // Определяем путь в Firebase Storage, где будет храниться изображение
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + System.currentTimeMillis() + ".jpg");
+
+            // Загружаем изображение в Firebase Storage
+            storageRef.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // Если загрузка успешна, получаем URL изображения
+                        Task<Uri> downloadUrl = storageRef.getDownloadUrl();
+                        downloadUrl.addOnSuccessListener(uri -> {
+                            // Сохраняем URL изображения в базу данных
+                            String imageUrl = uri.toString();
+                            saveImageToFirebaseDatabase(imageUrl);
+                        });
+                    })
+                    .addOnFailureListener(exception -> {
+                        // Если загрузка не удалась, выводим сообщение об ошибке
+                        Toast.makeText(getApplicationContext(), "Загрузка изображения не удалась", Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
+    private void saveImageToFirebaseDatabase(String imageUrl) {
+        // Получаем уникальный идентификатор для нового элемента в базе данных
+        String key = mDatabase.push().getKey();
+        String name = data.getStringExtra("name");
+        String type = data.getStringExtra("type");
+        int age = data.getIntExtra("age", 0);
+        float weight = data.getFloatExtra("weight", 0.0f);
+        byte[] imageData = data.getByteArrayExtra("image");
+        String animalId = data.getStringExtra("animalId");
+        // Создаем новый объект CatDog с данными о животном
+        Animal animal = new Animal(animalId, name, type, age, weight, imageUrl);
+
+
+
+        // Сохраняем новый объект CatDog в базе данных
+        mDatabase.child(key).setValue(animal);
+
+        // Выводим сообщение об успешном сохранении
+        Toast.makeText(getApplicationContext(), "Данные о животном успешно сохранены", Toast.LENGTH_SHORT).show();
+    }
      private void saveAnimalToFirebase(Animal animal) {
          FirebaseDatabase database = FirebaseDatabase.getInstance();
          DatabaseReference databaseRef = database.getReference("animals");

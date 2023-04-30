@@ -131,25 +131,27 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton addButton = findViewById(R.id.fab_add);
 
 
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
-        dbRef.addValueEventListener(new ValueEventListener() {
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("animals");
+        databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 animalList.clear(); // очищаем список животных
 
                 // Проходим по всем дочерним узлам "animals"
                 for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
+
+
                     // Получаем объект Animal из снепшота
                     Animal animal = animalSnapshot.getValue(Animal.class);
 
                     // Получаем URL-адрес изображения из объекта Animal
-                    String imageUrl= animal.getImageUrl();
+                    String imageUrl = animal.getImageUrl();
 
                     // Загружаем изображение из Firebase Storage с использованием URL-адреса
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                    StorageReference imagesRef = storageRef.child("images");
+                    StorageReference imagesRef = storageRef.child("images/" + imageUrl);
 
-                    storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                    imagesRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
                         // Создаем Bitmap из массива байтов
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
@@ -179,8 +181,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_ADD_ANIMAL);
             }
         });
+    }}
 
-
+/*
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -213,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
-             */
+
                 animalList.clear();
 
                 // Получение списка животных из Firebase Realtime Database
@@ -247,10 +250,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        /*
+    */ /*
+        @Override
+        protected void onActivityResult ( int requestCode, int resultCode, Intent data){
+            super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQUEST_CODE_ADD_ANIMAL && resultCode == RESULT_OK) {
             // Получаем данные из Intent
             String name = data.getStringExtra("name");
@@ -276,36 +280,12 @@ public class MainActivity extends AppCompatActivity {
             // Обновляем адаптер
             animalAdapter.notifyDataSetChanged();
         }
-
+ }
          */
-        if (requestCode == REQUEST_CODE_ADD_ANIMAL && resultCode == RESULT_OK) {
-            // Получаем данные из Intent
-            String name = data.getStringExtra("name");
-            String type = data.getStringExtra("type");
-            int age = data.getIntExtra("age", 0);
-            float weight = data.getFloatExtra("weight", 0.0f);
-            byte[] imageData = data.getByteArrayExtra("image");
-            String animalId = data.getStringExtra("animalId");
 
 
-            // Сохраняем изображение в Firebase Storage
-            saveImageToFirebaseStorage(imageData, animalId, name, type, age, weight);
 
-            // Создаем новый объект Animal
-            Animal animal = new Animal(animalId, name, type, age, weight, null);
-
-            // Сохраняем данные животного в Firebase Realtime Database
-            saveAnimalToFirebase(animal);
-
-            // Добавляем объект Animal в список
-            animalList.add(animal);
-
-            // Обновляем адаптер
-            animalAdapter.notifyDataSetChanged();
-        }
-
-    }
-
+    /*
     private void saveImageToFirebaseStorage(byte[] imageData, String animalId, String name, String type, int age, float weight) {
         if (imageData != null) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -337,8 +317,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void saveAnimalToFirebase(Animal animal) {
-        /*
+     */
+/*
+    private void saveAnimalToFirebase(Animal animal){
+
         // Получаем ссылку на коллекцию животных
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
@@ -359,56 +341,3 @@ public class MainActivity extends AppCompatActivity {
 }
 
          */
-        // Получаем ссылку на базу данных Firebase Realtime Database
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
-        dbRef.child(animal.getId()).setValue(animal.toMap());
-    }
-
-    private void loadAnimalsFromFirebase() {
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                animalList.clear();
-                //   DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("animals");
-                //  StorageReference imagesRef = FirebaseStorage.getInstance().getReference().child("images");
-
-                for (DataSnapshot animalSnapshot : snapshot.getChildren()) {
-                    // Получаем объект Animal из снепшота
-                    Animal animal = animalSnapshot.getValue(Animal.class);
-                    animalList.add(animal);
-                    /*
-                    String imageUrl= animal.getImageUrl();
-                    // Загружаем изображение из Firebase Storage с использованием URL-адреса
-                     StorageReference storageRef = imagesRef.child(animal.getImageUrl());
-                      Glide.with(MainActivity.this)
-                       .load(animal.getImageUrl())
-                     .into(animalImageView);
-                     storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
-                        // Создаем Bitmap из массива байтов
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-
-                        // Устанавливаем изображение в объект Animal
-                        animal.setImage(bitmap);
-
-                        // Добавляем объект Animal в список
-                        animalList.add(animal);
-
-                        // Обновляем адаптер
-                        animalAdapter.notifyDataSetChanged();
-                    }).addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to load image.", e);
-                    });
-                }
-
-                     */
-                }
-                animalAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Failed to load animals.", error.toException());
-            }
-        });
-    }}
