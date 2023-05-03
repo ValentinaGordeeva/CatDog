@@ -1,7 +1,5 @@
 package com.example.catdog;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,42 +7,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import android.net.Uri;
 import android.os.Bundle;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference dbRef;
     private Uri imageUri;
     private ImageView animalImageView;
+    private Button addButton,addnotif;
 
 
     @Override
@@ -70,8 +49,9 @@ public class MainActivity extends AppCompatActivity {
         animalList = new ArrayList<>();
         animalAdapter = new AnimalAdapter(animalList);
         recyclerView.setAdapter(animalAdapter);
-        FloatingActionButton addButton = findViewById(R.id.fab_add);
-
+      // FloatingActionButton addButton = findViewById(R.id.fab_add);
+        addButton=findViewById(R.id.fab_add);
+        addnotif=findViewById(R.id.btn_notif);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,6 +60,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        addnotif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Notification.class);
+                startActivity(intent);
+            }
+        });
+
 
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("animals");
         ChildEventListener childEventListener= new ChildEventListener() { public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {

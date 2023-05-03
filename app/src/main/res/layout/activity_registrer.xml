@@ -4,20 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegistrerActivity">
+    tools:context=".RegistrerActivity"
+   >
 
-    <EditText
-        android:layout_width="300dp"
+    <TextView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Email"
-        android:layout_centerInParent="true"
-        android:id="@+id/email_registr"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:text="CatDog"
+        android:textColor="#2F94B2"
+        android:textSize="90dp" />
+
+    <TextView
+        android:id="@+id/logovet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ветеринарная клиника "
+        android:fontFamily="sans-serif-light"
+        android:textColor="#2F94B2"
+        android:textSize="20dp"
+        android:layout_below="@id/logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
         />
 
+    <TextView
+        android:id="@+id/registr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logovet"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Регистрация "
+        android:textColor="#2F94B2"
+        android:textSize="40dp" />
+
+    <EditText
+        android:id="@+id/email_registr"
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/registr"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="30dp"
+        android:hint="Email" />
+
 
     <EditText
         android:layout_width="300dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:hint="Password"
         android:layout_centerHorizontal="true"
         android:id="@+id/password_registr"
@@ -27,13 +65,15 @@
 
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:text="Зарегистрироваться"
         android:layout_below="@id/password_registr"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:id="@+id/btn_registr"
+        android:backgroundTint="@color/buttons"
+
         />
 
 </RelativeLayout>
