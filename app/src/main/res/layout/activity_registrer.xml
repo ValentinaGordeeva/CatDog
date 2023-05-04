@@ -41,7 +41,8 @@
         android:fontFamily="sans-serif-medium"
         android:text="Регистрация "
         android:textColor="#2F94B2"
-        android:textSize="40dp" />
+        android:textSize="40dp"
+        android:gravity="center"/>
 
     <EditText
         android:id="@+id/email_registr"
@@ -50,7 +51,8 @@
         android:layout_below="@id/registr"
         android:layout_centerInParent="true"
         android:layout_marginTop="30dp"
-        android:hint="Email" />
+        android:hint="Email"
+        />
 
 
     <EditText

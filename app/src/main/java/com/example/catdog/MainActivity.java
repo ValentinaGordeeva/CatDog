@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -34,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference dbRef;
     private Uri imageUri;
     private ImageView animalImageView;
-    private Button addButton,addnotif;
+    //private Button addButton,addnotif;
+    private ImageButton addButton,addnotif;
 
 
     @Override

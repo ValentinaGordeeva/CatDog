@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
         btn_login=findViewById(R.id.btn_login);
         regist_txt=findViewById(R.id.regist_txt);
         mAuth=FirebaseAuth.getInstance();
-
         regist_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,10 +45,12 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (email_login.getText().toString().isEmpty() || password_login.getText().toString().isEmpty()) {
+                String Email =  email_login.getText().toString().trim();
+                String Password = password_login.getText().toString().trim();
+                if (Email.isEmpty() || Password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Заполните все пустые поля", Toast.LENGTH_SHORT).show();
                 } else {
-                   mAuth.signInWithEmailAndPassword(email_login.getText().toString(),password_login.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                   mAuth.signInWithEmailAndPassword(Email,Password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                        @Override                          public void onComplete(@NonNull Task<AuthResult> task) {
                            if(task.isSuccessful()){
                                Intent intent= new Intent(LoginActivity.this, MainActivity.class);

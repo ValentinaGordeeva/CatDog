@@ -21,6 +21,9 @@
         android:layout_centerHorizontal="true"
         android:text="Введите данные животного"
         android:textSize="25dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#2F94B2"
+        android:gravity="center"
 
 
         />
@@ -39,7 +42,8 @@
         android:id="@+id/btnAddPhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Выбрать фотографию" />
+        android:text="Выбрать фотографию"
+        android:backgroundTint="@color/buttons"/>
 
     <EditText
         android:id="@+id/etName"
@@ -86,6 +90,7 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/btnAdd"
         android:layout_marginTop="20dp"
+        android:backgroundTint="@color/buttons"
         />
 </LinearLayout>
 

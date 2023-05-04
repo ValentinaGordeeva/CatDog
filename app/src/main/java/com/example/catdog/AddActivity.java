@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -63,7 +64,8 @@ public class AddActivity extends AppCompatActivity {
     private Uri imageUri;
     private Intent resultIntent;
 
-
+    private static final int MAX_IMAGE_SIZE = 14000;
+    private static final int MIN_IMAGE_SIZE = 200;
     private Uri selectedImageUri;
     private Intent data;
     private DatabaseReference mDatabase;
@@ -107,25 +109,26 @@ public class AddActivity extends AppCompatActivity {
 
      protected void onActivityResult(int requestCode, int resultCode, Intent data) {
          super.onActivityResult(requestCode, resultCode, data);
-/*
-         if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-             Uri imageUri = data.getData();
-             Bitmap bitmap = null;
-             try {
-                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-             } catch (IOException e) {
-                 e.printStackTrace();
-             }
 
-             // Устанавливаем выбранное изображение в ImageView
-             imageView.setImageBitmap(bitmap);
-         }
 
- */if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK) {
              // Получаем URI выбранного изображения
              selectedImageUri = data.getData();
 
-             // Отображаем выбранное изображение в ImageView
+            String[] filePathColumn = {MediaStore.Images.Media.SIZE};
+            Cursor cursor = getContentResolver().query(selectedImageUri, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int sizeIndex = cursor.getColumnIndex(filePathColumn[0]);
+            long imageSize = cursor.getLong(sizeIndex);
+            cursor.close();
+            if (imageSize > MAX_IMAGE_SIZE) {
+                Toast.makeText(this, "Размер изображения слишком большой", Toast.LENGTH_SHORT).show();
+                return;
+            }if (imageSize < MIN_IMAGE_SIZE) {
+                Toast.makeText(this, "Размер изображения слишком маленький", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Отображаем выбранное изображение в ImageView
              imageView.setImageURI(selectedImageUri);
 
              // Сохраняем данные Intent для передачи в onSaveClick
@@ -143,22 +146,12 @@ public class AddActivity extends AppCompatActivity {
          String type = etType.getText().toString();
          int age = Integer.parseInt(etAge.getText().toString());
          float weight = Float.parseFloat(etWeight.getText().toString());
-
-         if (name.trim().isEmpty() || type.trim().isEmpty()) {
-             Toast.makeText(this, "Please enter animal name and type", Toast.LENGTH_SHORT).show();
+         String Age= etAge.getText().toString();
+         String Weight= etWeight.getText().toString();
+         if (name.trim().isEmpty() || type.trim().isEmpty()||Age.trim().isEmpty()||Weight.trim().isEmpty() ) {
+             Toast.makeText(this, "Заполните пустые поля", Toast.LENGTH_SHORT).show();
              return;
          }
-
-         // Получаем Bitmap из ImageView
-        /* Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-
-         // Преобразуем Bitmap в массив байтов
-         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-         byte[] imageData = baos.toByteArray();
-
-         */
-
          // Получаем ссылку на Firebase Storage
          FirebaseStorage storage = FirebaseStorage.getInstance();
          StorageReference storageRef = storage.getReference();
@@ -172,8 +165,6 @@ public class AddActivity extends AppCompatActivity {
              imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                  String imageURL = uri.toString();
 
-                 // Получаем список URL-адресов изображений
-                // String imageUrls= uri.toString();
 
 
                  // Создаем новый объект Animal
@@ -191,18 +182,7 @@ public class AddActivity extends AppCompatActivity {
              Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
          });
 
-                 /*
-         // передаю  в MainActivity
-         Intent resultIntent = new Intent();
-         resultIntent.putExtra("name", name);
-         resultIntent.putExtra("type", type);
-         resultIntent.putExtra("age", age);
-         resultIntent.putExtra("weight", weight);
-         resultIntent.putExtra("image", imageData);
-         setResult(Activity.RESULT_OK, resultIntent);
-         finish();
 
-                  */
      }
     private void uploadImage() {
         // Проверяем, было ли выбрано изображение
