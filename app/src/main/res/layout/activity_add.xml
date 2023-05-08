@@ -7,91 +7,89 @@
     android:layout_height="match_parent"
     tools:context=".AddActivity"
     >
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="50dp"
-    >
 
-    <TextView
-        android:id="@+id/text_add"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Введите данные животного"
-        android:textSize="25dp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="#2F94B2"
-        android:gravity="center"
-
-
-        />
-   <ImageView
-    android:id="@+id/imageView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:adjustViewBounds="true"
-    android:scaleType="centerCrop"
-       android:layout_below="@id/text_add"
-       android:layout_marginTop="20dp"
-    />
-
-    <Button
-        android:layout_below="@id/imageView"
-        android:id="@+id/btnAddPhoto"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Выбрать фотографию"
-        android:backgroundTint="@color/buttons"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="50dp">
 
-    <EditText
-        android:id="@+id/etName"
-        android:layout_centerHorizontal="true"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btnAddPhoto"
-        android:layout_marginTop="50dp"
-        android:hint="Кличка" />
-
-    <EditText
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:hint="Тип"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/etType"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/etName"
-        />
-    <EditText
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:hint="Возраст"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/etAge"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/etType"
-        />
-    <EditText
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:hint="Вес"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/etWeight"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/etAge"
-        />
+        <TextView
+            android:id="@+id/text_add"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:text="Введите данные животного"
+            android:textColor="#2F94B2"
+            android:textSize="25dp"
 
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Добавить"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/btnAdd"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/buttons"
-        />
-</LinearLayout>
+            />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_add"
+            android:layout_marginTop="20dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop" />
+
+        <Button
+            android:id="@+id/btnAddPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imageView"
+            android:backgroundTint="@color/buttons"
+            android:text="Выбрать фотографию" />
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnAddPhoto"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:hint="Кличка" />
+
+        <EditText
+            android:id="@+id/etType"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etName"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:hint="Тип" />
+
+        <EditText
+            android:id="@+id/etAge"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etType"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:hint="Возраст" />
+
+        <EditText
+            android:id="@+id/etWeight"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etAge"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:hint="Вес" />
+
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/buttons"
+            android:text="Добавить" />
+    </LinearLayout>
 
 </ScrollView>

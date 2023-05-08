@@ -144,44 +144,73 @@ public class AddActivity extends AppCompatActivity {
      public void onSaveClick(View view) {
          String name = etName.getText().toString();
          String type = etType.getText().toString();
-         int age = Integer.parseInt(etAge.getText().toString());
-         float weight = Float.parseFloat(etWeight.getText().toString());
+
          String Age= etAge.getText().toString();
          String Weight= etWeight.getText().toString();
-         if (name.trim().isEmpty() || type.trim().isEmpty()||Age.trim().isEmpty()||Weight.trim().isEmpty() ) {
+
+         //int age = Integer.parseInt(etAge.getText().toString());
+         //float weight = Float.parseFloat(etWeight.getText().toString())
+         /*  if (name.trim().isEmpty() || type.trim().isEmpty()||Age.trim().isEmpty()||Weight.trim().isEmpty() ) {
              Toast.makeText(this, "Заполните пустые поля", Toast.LENGTH_SHORT).show();
              return;
          }
+          */if (!name.matches("[А-Яа-яёЁ]{1,10}")) {
+             Toast.makeText(this, "Имя питомца должно содержать только кириллицу и не более 10 символов", Toast.LENGTH_SHORT).show();
+             return;
+         }
+         if (TextUtils.isEmpty(name)) {
+             Toast.makeText(this, "Введите имя", Toast.LENGTH_SHORT).show();
+             return;
+         }
+         if (TextUtils.isEmpty(type)) {
+             Toast.makeText(this, "Введите тип", Toast.LENGTH_SHORT).show();
+             return;
+         }
+         if (TextUtils.isEmpty(Age)) {
+             Toast.makeText(this, "Введите возраст", Toast.LENGTH_SHORT).show();
+             return;
+         }
+         if (TextUtils.isEmpty(Weight)) {
+             Toast.makeText(this, "Введите вес", Toast.LENGTH_SHORT).show();
+             return;
+         }
+         int age = Integer.parseInt(Age);
+         float weight= Float.parseFloat(Weight);
+
+
          // Получаем ссылку на Firebase Storage
          FirebaseStorage storage = FirebaseStorage.getInstance();
          StorageReference storageRef = storage.getReference();
-         StorageReference imageRef = storageRef.child("images/" + selectedImageUri.getLastPathSegment());
-         UploadTask uploadTask = imageRef.putFile(selectedImageUri);
+
          // Загружаем изображение животного в Firebase Storage
+         if (selectedImageUri == null){
+             Toast.makeText(this, "Изображение не выбрано", Toast.LENGTH_SHORT).show();
+         }else {
+             StorageReference imageRef = storageRef.child("images/" + selectedImageUri.getLastPathSegment());
+             UploadTask uploadTask = imageRef.putFile(selectedImageUri);
 
 
-         uploadTask.addOnSuccessListener(taskSnapshot -> {
-             // Получаем URL-адрес загруженного файла
-             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                 String imageURL = uri.toString();
+             uploadTask.addOnSuccessListener(taskSnapshot -> {
+                 // Получаем URL-адрес загруженного файла
+                 imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                     String imageURL = uri.toString();
 
 
+                     // Создаем новый объект Animal
+                     Animal animal = new Animal(null, name, type, age, weight, imageURL);
+                     saveAnimalToFirebase(animal);
 
-                 // Создаем новый объект Animal
-                 Animal animal = new Animal(null, name, type, age, weight, imageURL);
-                 saveAnimalToFirebase(animal);
-
-                 // Передаем данные о животном в MainActivity
-                 Intent resultIntent = new Intent();
-                 resultIntent.putExtra("animal", animal);
-                 setResult(Activity.RESULT_OK, resultIntent);
-                 finish();
+                     // Передаем данные о животном в MainActivity
+                     Intent resultIntent = new Intent();
+                     resultIntent.putExtra("animal", animal);
+                     setResult(Activity.RESULT_OK, resultIntent);
+                     finish();
+                 });
+             }).addOnFailureListener(exception -> {
+                 // Обработка ошибки загрузки файла
+                 Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
              });
-         }).addOnFailureListener(exception -> {
-             // Обработка ошибки загрузки файла
-             Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
-         });
-
+         }
 
      }
     private void uploadImage() {

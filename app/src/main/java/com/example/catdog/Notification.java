@@ -1,10 +1,15 @@
 package com.example.catdog;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -40,7 +45,11 @@ public class Notification extends AppCompatActivity {
 
         Button buttonCreateNotification = findViewById(R.id.button_create_notification);
 
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default", "Default channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
         buttonCreateNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,21 +73,8 @@ public class Notification extends AppCompatActivity {
                                                 // Создать уведомление с выбранной датой и временем
                                                 Calendar calendar = Calendar.getInstance();
                                                 calendar.set(year, month, dayOfMonth, hourOfDay, minute);
-                                                long notificationTimeInMillis = calendar.getTimeInMillis();
 
-                                                NotificationCompat.Builder builder = new NotificationCompat.Builder(Notification.this, "default")
-                                                        .setSmallIcon(R.drawable.notification)
-                                                        .setContentTitle(title)
-                                                        .setContentText(message)
-                                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                                        .setAutoCancel(true)
-                                                        .setWhen(notificationTimeInMillis);
-
-                                                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(Notification.this);
-                                                notificationManager.notify(NOTIFICATION_ID, builder.build());
-
-                                                Toast.makeText(Notification.this, "Уведомление создано", Toast.LENGTH_SHORT).show();
-                                                finish();
+                                                createAlarm(title, message, calendar);
                                             }
                                         },
                                         calendar.get(Calendar.HOUR_OF_DAY),
@@ -95,5 +91,18 @@ public class Notification extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
+    }
+    private void createAlarm(String title, String message, Calendar calendar) {
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        alarmIntent.putExtra("title", title);
+        alarmIntent.putExtra("message", message);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        Toast.makeText(this, "Напоминание создано", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }
