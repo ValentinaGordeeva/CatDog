@@ -2,4 +2,5 @@
     <string name="app_name">CatDog</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_toast_text">My Toast Message</string>
 </resources>

@@ -52,4 +52,7 @@ public class RegistrerActivity extends AppCompatActivity {
             }
         });
     }
+    public void showMyToast() {
+        Toast.makeText(this, R.string.my_toast_text, Toast.LENGTH_SHORT).show();
+    };
 }

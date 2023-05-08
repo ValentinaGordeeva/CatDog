@@ -2,7 +2,7 @@ package com.example.catdog;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import java.lang.String;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -42,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,4 +67,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+    public void showMyToast() {
+        Toast.makeText(this, R.string.my_toast_text, Toast.LENGTH_SHORT).show();
+    };
 }
