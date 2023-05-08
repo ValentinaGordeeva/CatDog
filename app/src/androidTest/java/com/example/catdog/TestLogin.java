@@ -22,7 +22,8 @@ public class TestLogin {
 
     @Test
     public void testLoginSuccess() {
-       activityRule.getScenario();
+        ActivityScenario<LoginActivity> scenario = activityRule.getScenario();
+
         // Вводим правильный email и пароль
 
             onView(withId(R.id.email_login)).perform(typeText("samoilovali100@gmail.com"));
