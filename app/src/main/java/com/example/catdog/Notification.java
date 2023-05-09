@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -50,20 +51,22 @@ public class Notification extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+
         buttonCreateNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String title = editTextTitle.getText().toString();
                 String message = editTextMessage.getText().toString();
+
                 Calendar calendar = Calendar.getInstance();
                 DatePickerDialog datePickerDialog = new DatePickerDialog(
                         Notification.this,
                         new DatePickerDialog.OnDateSetListener() {
+
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
                                 // Выбрана дата
-
-
                                 Calendar calendar = Calendar.getInstance();
                                 TimePickerDialog timePickerDialog = new TimePickerDialog(
                                         Notification.this,
@@ -96,7 +99,10 @@ public class Notification extends AppCompatActivity {
         Intent alarmIntent = new Intent(this, AlarmReceiver.class);
         alarmIntent.putExtra("title", title);
         alarmIntent.putExtra("message", message);
-
+        if(TextUtils.isEmpty(title)){
+            Toast.makeText(this, "Невозможно создать пустое напоминание", Toast.LENGTH_SHORT).show();
+            return;
+        }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

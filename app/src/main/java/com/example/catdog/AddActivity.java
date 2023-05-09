@@ -142,11 +142,11 @@ public class AddActivity extends AppCompatActivity {
      }
 
      public void onSaveClick(View view) {
-         String name = etName.getText().toString();
-         String type = etType.getText().toString();
+         String name = etName.getText().toString().trim();
+         String type = etType.getText().toString().trim();
 
-         String Age= etAge.getText().toString();
-         String Weight= etWeight.getText().toString();
+         String Age= etAge.getText().toString().trim();
+         String Weight= etWeight.getText().toString().trim();
 
          //int age = Integer.parseInt(etAge.getText().toString());
          //float weight = Float.parseFloat(etWeight.getText().toString())
@@ -154,7 +154,8 @@ public class AddActivity extends AppCompatActivity {
              Toast.makeText(this, "Заполните пустые поля", Toast.LENGTH_SHORT).show();
              return;
          }
-          */if (!name.matches("[А-Яа-яёЁ]{1,10}")) {
+          */
+         if (!name.matches("[А-Яа-яёЁ]{1,10}")) {
              Toast.makeText(this, "Имя питомца должно содержать только кириллицу и не более 10 символов", Toast.LENGTH_SHORT).show();
              return;
          }
@@ -176,7 +177,10 @@ public class AddActivity extends AppCompatActivity {
          }
          int age = Integer.parseInt(Age);
          float weight= Float.parseFloat(Weight);
-
+            if(age<=0 ||weight<=0 ){
+                Toast.makeText(this, "Вес или возраст не может быть 0", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
          // Получаем ссылку на Firebase Storage
          FirebaseStorage storage = FirebaseStorage.getInstance();

@@ -44,7 +44,7 @@ public class RegistrerActivity extends AppCompatActivity {
                                 Intent intent= new Intent(RegistrerActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }else {
-                                Toast.makeText(RegistrerActivity.this, "Ошибка", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegistrerActivity.this, "Ошибка ввода данных", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -52,7 +52,5 @@ public class RegistrerActivity extends AppCompatActivity {
             }
         });
     }
-    public void showMyToast() {
-        Toast.makeText(this, R.string.my_toast_text, Toast.LENGTH_SHORT).show();
-    };
+
 }
